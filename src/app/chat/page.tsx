@@ -46,6 +46,10 @@ export default function ChatPage() {
     }
   }, [isAuthenticated]);
 
+  // TEMPORARY: Allow workspace to load without authentication for testing
+  // Remove this authentication requirement to match original behavior
+  const shouldShowWorkspace = true;
+
   // Scroll chat to bottom on new messages
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -90,8 +94,8 @@ export default function ChatPage() {
     );
   }
 
-  // 2. Auth view
-  if (!isAuthenticated) {
+  // 2. Auth view - TEMPORARILY BYPASSED to match original behavior
+  if (!isAuthenticated && !shouldShowWorkspace) {
     return (
       <div className="relative flex items-center justify-center min-h-screen bg-chatbg-light dark:bg-chatbg-dark px-4 overflow-hidden">
         {/* Soft glowing ambient spots */}
@@ -222,7 +226,7 @@ export default function ChatPage() {
               href="/"
               className="text-xs px-3 py-1.5 rounded-xl border border-gray-200 dark:border-gray-800 hover:bg-gray-100 dark:hover:bg-gray-800 font-medium transition"
             >
-              eCommerce Home
+              NOVA AI Home
             </Link>
             <button
               onClick={() => selectConversation(null)}
