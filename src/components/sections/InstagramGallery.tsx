@@ -26,12 +26,12 @@ export default function InstagramGallery() {
         className="text-center mb-12"
       >
         <div className="flex items-center justify-center gap-3 mb-4">
-          <Instagram className="w-5 h-5 text-[#C9A96E]" />
-          <span className="text-xs uppercase tracking-[0.3em] text-[#C9A96E]">Follow Us</span>
+          <Instagram className="w-5 h-5 text-[#6366f1]" />
+          <span className="text-xs uppercase tracking-[0.3em] text-[#6366f1]">Follow Us</span>
         </div>
-        <h2 className="font-['Playfair_Display'] text-4xl md:text-5xl mb-4">@maison.official</h2>
+        <h2 className="font-['Playfair_Display'] text-4xl md:text-5xl mb-4">@novaai_official</h2>
         <p className="text-gray-500 max-w-md mx-auto">
-          Join our community of style connoisseurs. Share your Maison moments.
+          Join our community of AI innovators. Share your NOVA AI moments.
         </p>
       </motion.div>
 

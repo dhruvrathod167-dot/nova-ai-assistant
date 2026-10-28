@@ -38,32 +38,31 @@ export default function BrandStory() {
           animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 60 }}
           transition={{ duration: 0.9, ease: 'easeOut', delay: 0.2 }}
         >
-          <p className="uppercase tracking-[0.3em] text-[#C9A96E] text-xs mb-4">
+          <p className="uppercase tracking-[0.3em] text-[#6366f1] text-xs mb-4">
             Our Story
           </p>
           <h2 className="font-['Playfair_Display'] text-4xl md:text-5xl text-white mb-6 leading-tight">
-            Crafting Timeless Elegance Since 1947
+            Pioneering AI Innovation Since 2024
           </h2>
           <div className="space-y-5">
             <p className="text-white/60 leading-relaxed font-['Inter']">
-              Born in the ateliers of post-war Paris, our maison was founded on a
-              singular belief: that true luxury is not merely acquired, but felt.
-              Every garment we create carries the weight of decades of artisanal
-              knowledge, passed down through generations of master craftsmen who
-              understand that excellence is found in the unseen details.
+              Founded in the heart of Silicon Valley, NOVA AI was born from a singular 
+              vision: to democratize artificial intelligence and make it accessible to 
+              everyone. Our journey began with a small team of passionate AI researchers 
+              who believed that advanced technology should empower, not intimidate.
             </p>
             <p className="text-white/60 leading-relaxed font-['Inter']">
-              Our ateliers remain nestled in the same arrondissement where the
-              founder first sketched his vision onto parchment. Here, the
-              slow, deliberate art of hand-finishing endures — each seam is
-              considered, each button sourced from the finest horn and mother-of-pearl,
-              each silhouette refined through hundreds of hours of patient draping.
+              Our labs remain at the forefront of AI innovation, where cutting-edge 
+              research meets practical application. Here, the deliberate art of 
+              model refinement endures — each parameter is carefully tuned, each 
+              architecture meticulously designed, and each capability rigorously tested 
+              to ensure exceptional performance and reliability.
             </p>
             <p className="text-white/60 leading-relaxed font-['Inter']">
-              We do not follow seasons. We follow conviction. In an age of fleeting
-              trends, we remain steadfast in our commitment to creating pieces that
-              transcend the calendar — garments that will be cherished today and
-              inherited tomorrow.
+              We do not follow trends. We create them. In an era of rapid technological 
+              change, we remain steadfast in our commitment to developing AI solutions 
+              that transcend the moment — tools that will empower users today and 
+              shape the future tomorrow.
             </p>
           </div>
           <a
