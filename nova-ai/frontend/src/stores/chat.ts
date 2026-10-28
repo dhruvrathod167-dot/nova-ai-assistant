@@ -434,7 +434,7 @@ try {
         
         // Force re-fetch settings to ensure sync
         setTimeout(() => {
-          fetchSettings();
+          get().fetchSettings();
         }, 100);
       } else {
         console.error('Failed to update settings, status:', response.status);
@@ -442,7 +442,7 @@ try {
     } catch (err) {
       console.error('Failed to update settings', err);
       // Re-fetch settings on error to ensure we have the latest state
-      fetchSettings();
+      get().fetchSettings();
     }
   },
 

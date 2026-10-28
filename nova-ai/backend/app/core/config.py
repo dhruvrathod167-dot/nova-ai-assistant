@@ -14,7 +14,7 @@ class Settings(BaseSettings):
     BACKEND_PORT: int = 8002
     
     # JWT & Authentication
-    SECRET_KEY: str = Field(default="super_secret_nova_ai_key_change_me_in_production")
+    SECRET_KEY: str = Field(default=os.environ.get("SECRET_KEY", "super_secret_nova_ai_key_change_me_in_production"))
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 7  # 7 days
     
     # Database
@@ -69,7 +69,9 @@ class Settings(BaseSettings):
         "http://localhost:3001",
         "http://127.0.0.1:3001",
         "http://localhost:3003",
-        "http://127.0.0.1:3003"
+        "http://127.0.0.1:3003",
+        "https://nova-ai-client.onrender.com",
+        "https://nova-ai-client.onrender.com"
     ]
 
     class Config:
