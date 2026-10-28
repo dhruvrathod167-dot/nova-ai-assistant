@@ -35,29 +35,16 @@ if (!fs.existsSync(path.join(__dirname, 'node_modules/@prisma/client'))) {
 
 // Set the correct database path for standalone build
 const dbPath = path.join(__dirname, 'prisma', 'dev.db');
-process.env.DATABASE_URL = `file:${dbPath}`;
-
-// Wait for database to be ready if using PostgreSQL
-if (process.env.DATABASE_URL && process.env.DATABASE_URL.includes('postgresql')) {
-  console.log('Waiting for PostgreSQL database to be ready...');
-  
-  const waitDb = spawn('python', ['-c', `import psycopg2; psycopg2.connect('${process.env.DATABASE_URL}')`], {
-    stdio: 'inherit',
-    cwd: __dirname
-  });
-  
-  waitDb.on('exit', (code) => {
-    if (code === 0) {
-      startServer();
-    } else {
-      console.log('Database is unavailable - starting server anyway...');
-      startServer();
-    }
-  });
-} else {
+if (fs.existsSync(dbPath)) {
+  process.env.DATABASE_URL = `file:${dbPath}`;
   console.log(`Using database at: ${dbPath}`);
-  startServer();
+} else {
+  console.log('Database file not found at:', dbPath);
+  console.log('Starting server without database connection');
 }
+
+// Start the server directly without waiting for database
+startServer();
 
 function startServer() {
 // Start the Next.js server
