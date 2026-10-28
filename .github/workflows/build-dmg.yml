@@ -1,0 +1,46 @@
+name: Build macOS DMG
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-macos:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci || npm install
+
+      - name: Generate Prisma Client
+        run: npx prisma generate
+
+      - name: Build Next.js
+        run: npm run build
+
+      - name: Build DMG
+        env:
+          # If no certificate is provided, set CSC_IDENTITY_AUTO_DISCOVERY to false to bypass local keychain identity lookups
+          CSC_IDENTITY_AUTO_DISCOVERY: ${{ secrets.MACOS_CERTIFICATE_P12 && 'true' || 'false' }}
+        run: |
+          if [ -n "${{ secrets.MACOS_CERTIFICATE_P12 }}" ]; then
+            export CSC_LINK="${{ secrets.MACOS_CERTIFICATE_P12 }}"
+            export CSC_KEY_PASSWORD="${{ secrets.MACOS_CERTIFICATE_PASSWORD }}"
+            export APPLE_ID="${{ secrets.APPLE_ID }}"
+            export APPLE_APP_SPECIFIC_PASSWORD="${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}"
+          fi
+          npx electron-builder --mac dmg --publish never
+
+      - name: Upload DMG
+        uses: actions/upload-artifact@v4
+        with:
+          name: Chatdemo-macOS
+          path: dist/*.dmg
