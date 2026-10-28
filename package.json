@@ -12,9 +12,11 @@
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:reset": "prisma migrate reset",
+    "db:init": "node scripts/init-db.js",
     "electron": "electron electron/main.js",
     "dist": "node electron/build-standalone.js",
-    "dev:electron": "concurrently \"npm run dev\" \"npm run electron\""
+    "dev:electron": "concurrently \"npm run dev\" \"npm run electron\"",
+    "postinstall": "npm run db:generate"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

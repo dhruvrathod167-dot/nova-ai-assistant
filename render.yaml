@@ -1,0 +1,28 @@
+# Render Configuration for Next.js E-Commerce App
+services:
+  - type: web
+    name: maison-ecommerce
+    env: node
+    buildCommand: "npm run build"
+    startCommand: "node .next/standalone/server.js"
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        value: "file:./production.db"
+        # For PostgreSQL production: 
+        # value: "postgresql://username:password@host:port/database"
+      - key: NEXT_PUBLIC_API_URL
+        value: "https://maison-ecommerce.onrender.com"
+    healthCheck:
+      path: /
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    disk:
+      sizeGB: 1
+    cpu:
+      kind: shared
+      units: 2
+    memory:
+      sizeGB: 1
