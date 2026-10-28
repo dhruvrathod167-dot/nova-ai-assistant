@@ -14,16 +14,16 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "MAISON — Luxury Fashion & Lifestyle",
-  description: "Discover the world's finest luxury fashion. Curated collections from the most esteemed designer houses. Exceptional craftsmanship, timeless elegance.",
-  keywords: ["luxury fashion", "designer clothing", "haute couture", "premium brands", "Maison"],
+  title: "NOVA AI",
+  description: "ChatGPT-style production chat workspace",
+  keywords: ["AI chat", "artificial intelligence", "chatbot", "workspace", "productivity"],
   icons: {
     icon: "https://z-cdn.chatglm.cn/z-ai/static/logo.svg",
   },
   openGraph: {
-    title: "MAISON — Luxury Fashion & Lifestyle",
-    description: "Curating the world's finest luxury fashion since 1947.",
-    siteName: "MAISON",
+    title: "NOVA AI",
+    description: "ChatGPT-style production chat workspace",
+    siteName: "NOVA AI",
     type: "website",
   },
 };

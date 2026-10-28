@@ -174,7 +174,7 @@ export default function ChatPage() {
           {/* Go back to homepage option */}
           <div className="mt-6 text-center">
             <Link href="/" className="text-xs text-gray-500 hover:text-nova-accent transition">
-              ← Return to MAISON E-Commerce Home
+              ← Back to NOVA AI Home
             </Link>
           </div>
         </div>

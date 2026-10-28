@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════
-   MAISON — Luxury Fashion eCommerce
+   NOVA AI
    Design System · Global Styles
    Tailwind CSS v4
    ═══════════════════════════════════════════════════════════ */
@@ -575,7 +575,7 @@
   color: var(--muted-foreground);
 }
 
-/* Editorial headline sizes (fashion magazine scale) */
+/* Editorial headline sizes */
 .headline-display {
   font-family: var(--font-playfair);
   font-weight: 400;

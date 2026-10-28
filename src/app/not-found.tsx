@@ -21,15 +21,15 @@ export default function NotFound() {
         className="w-16 h-px bg-[#C9A96E] mb-8"
       />
 
-      {/* MAISON branding */}
+      {/* NOVA AI branding */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
         className="mb-6"
       >
-        <Link href="/" className="font-['Playfair_Display'] text-3xl tracking-widest text-[#C9A96E] hover:tracking-[0.3em] transition-all duration-500">
-          MAISON
+        <Link href="/" className="font-['Playfair_Display'] text-3xl tracking-widest text-[#6366f1] hover:tracking-[0.3em] transition-all duration-500">
+          NOVA AI
         </Link>
       </motion.div>
 
@@ -55,7 +55,7 @@ export default function NotFound() {
         </h2>
         <p className="font-['Inter'] text-white/50 text-sm md:text-base leading-relaxed mb-10">
           The page you are looking for may have been moved, renamed, or is
-          temporarily unavailable. Let us guide you back to our collections.
+          temporarily unavailable. Let us guide you back to NOVA AI.
         </p>
       </motion.div>
 
@@ -73,10 +73,10 @@ export default function NotFound() {
           Back to Home
         </Link>
         <Link
-          href="/shop"
+          href="/chat"
           className="font-['Inter'] text-sm uppercase tracking-widest px-8 py-4 border border-white/20 text-white hover:bg-white/10 transition-colors duration-300"
         >
-          Browse Collections
+          Browse Features
         </Link>
       </motion.div>
 
@@ -94,7 +94,7 @@ export default function NotFound() {
         transition={{ duration: 0.8, delay: 1.1 }}
         className="font-['Inter'] text-white/30 text-[10px] tracking-widest uppercase mt-8"
       >
-        Luxury Fashion and Lifestyle
+        AI Chat Workspace
       </motion.p>
     </div>
   );

@@ -12,10 +12,12 @@ import {
   Mic,
   MicOff,
   Sparkles,
-  Shirt,
-  Gem,
+  Code,
+  PenTool,
+  BookOpen,
+  BarChart,
+  Palette,
   Briefcase,
-  Watch,
 } from 'lucide-react';
 
 /* ------------------------------------------------------------------ */
@@ -31,30 +33,30 @@ type SearchResult = {
 
 /* ------------------------------------------------------------------ */
 const TRENDING = [
-  'Silk Evening Gown',
-  'Leather Tote Bag',
-  'Cashmere Overcoat',
-  'Gold Pendant Necklace',
-  'Designer Stilettos',
-  'Diamond Stud Earrings',
-  'Tailored Wool Blazer',
-  'Quilted Chain Bag',
+  'AI code review',
+  'Data analysis',
+  'Content generation',
+  'Technical writing',
+  'Research assistance',
+  'Code debugging',
+  'Creative writing',
+  'Business strategy',
 ];
 
 const CATEGORIES = [
-  { name: 'Women', icon: Shirt, href: '/category/women' },
-  { name: 'Men', icon: Shirt, href: '/category/men' },
-  { name: 'Bags', icon: Briefcase, href: '/category/bags' },
-  { name: 'Jewelry', icon: Gem, href: '/category/jewelry' },
-  { name: 'Shoes', icon: Watch, href: '/category/shoes' },
-  { name: 'Accessories', icon: Watch, href: '/category/accessories' },
+  { name: 'Development', icon: Code, href: '/category/development' },
+  { name: 'Writing', icon: PenTool, href: '/category/writing' },
+  { name: 'Research', icon: BookOpen, href: '/category/research' },
+  { name: 'Analysis', icon: BarChart, href: '/category/analysis' },
+  { name: 'Design', icon: Palette, href: '/category/design' },
+  { name: 'Business', icon: Briefcase, href: '/category/business' },
 ];
 
 const AI_SUGGESTIONS = [
-  'What to wear to a black-tie event?',
-  'Best investment bags 2026',
-  'Minimalist everyday jewelry',
-  'Seasonal color palette guide',
+  'Help me debug this code',
+  'Generate a business plan',
+  'Write a blog post outline',
+  'Analyze market trends',
 ];
 
 const overlayVariants = {
@@ -92,7 +94,7 @@ const cardVariants = {
 };
 
 /* ------------------------------------------------------------------ */
-const STORAGE_KEY = 'maison-search-history';
+const STORAGE_KEY = 'nova-ai-search-history';
 function getSearchHistory(): string[] {
   if (typeof window === 'undefined') return [];
   try {
@@ -244,7 +246,7 @@ export default function SearchOverlay() {
                   type="text"
                   value={query}
                   onChange={(e) => handleInputChange(e.target.value)}
-                  placeholder="Search collections, designers, pieces..."
+                  placeholder="Search AI features, tools, topics..."
                   className="w-full border-b-2 border-white/20 bg-transparent py-5 pl-14 pr-24 font-['Playfair_Display'] text-2xl md:text-3xl text-white placeholder:text-white/25 outline-none transition-colors duration-300 focus:border-[#C9A96E]/60"
                 />
                 <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-1">
@@ -354,7 +356,7 @@ export default function SearchOverlay() {
               {!loading && hasSearched && results.length === 0 && query.length >= 2 && (
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-16">
                   <p className="font-['Playfair_Display'] text-xl text-white/60">No results found</p>
-                  <p className="mt-2 font-['Inter'] text-sm text-white/30">Try a different search term or browse our collections</p>
+                  <p className="mt-2 font-['Inter'] text-sm text-white/30">Try a different search term or browse our features</p>
                 </motion.div>
               )}
 
@@ -415,7 +417,7 @@ export default function SearchOverlay() {
                     <div className="mt-8">
                       <div className="mb-4 flex items-center gap-3">
                         <Sparkles className="h-4 w-4 text-[#C9A96E]" />
-                        <span className="font-['Inter'] text-xs uppercase tracking-[0.2em] text-white/40">Style Assistant</span>
+                        <span className="font-['Inter'] text-xs uppercase tracking-[0.2em] text-white/40">AI Assistant</span>
                       </div>
                       <div className="space-y-1">
                         {AI_SUGGESTIONS.map((s, i) => (
