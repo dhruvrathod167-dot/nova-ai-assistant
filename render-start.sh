@@ -33,6 +33,10 @@ if (!fs.existsSync(path.join(__dirname, 'node_modules/@prisma/client'))) {
   });
 }
 
+// Set the correct database path for standalone build
+const dbPath = path.join(__dirname, 'prisma', 'dev.db');
+process.env.DATABASE_URL = `file:${dbPath}`;
+
 // Wait for database to be ready if using PostgreSQL
 if (process.env.DATABASE_URL && process.env.DATABASE_URL.includes('postgresql')) {
   console.log('Waiting for PostgreSQL database to be ready...');
@@ -51,21 +55,22 @@ if (process.env.DATABASE_URL && process.env.DATABASE_URL.includes('postgresql'))
     }
   });
 } else {
+  console.log(`Using database at: ${dbPath}`);
   startServer();
 }
 
 function startServer() {
-  // Start the Next.js server
-  const serverProcess = spawn('node', [serverPath], {
-    env: { 
-      ...process.env, 
-      PORT: PORT,
-      HOST: HOST,
-      NODE_ENV: 'production'
-    },
-    stdio: 'inherit',
-    cwd: __dirname
-  });
+// Start the Next.js server
+const serverProcess = spawn('node', [serverPath], {
+  env: { 
+    ...process.env, 
+    PORT: PORT,
+    HOSTNAME: HOST,
+    NODE_ENV: 'production'
+  },
+  stdio: 'inherit',
+  cwd: __dirname
+});
 
   serverProcess.on('error', (error) => {
     console.error('Failed to start server:', error);

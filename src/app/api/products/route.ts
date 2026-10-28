@@ -66,6 +66,10 @@ export async function GET(request: Request) {
       page,
     });
   } catch (error) {
-    return NextResponse.json({ error: 'Failed to fetch products' }, { status: 500 });
+    console.error('API Error:', error);
+    return NextResponse.json({ 
+      error: 'Failed to fetch products',
+      details: error.message 
+    }, { status: 500 });
   }
 }
