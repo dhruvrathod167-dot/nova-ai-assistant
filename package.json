@@ -7,7 +7,7 @@
     "dev": "next dev -p 3000",
     "backend:dev": "powershell -Command \"cd nova-ai/backend; venv\\Scripts\\python.exe -m uvicorn app.main:app --reload --port 8000\"",
     "build": "prisma generate && next build",
-    "start": "node .next/standalone/server.js",
+    "start": "next start",
     "lint": "eslint .",
     "db:push": "prisma db push --accept-data-loss",
     "db:generate": "prisma generate",
