@@ -4,14 +4,18 @@ services:
     name: maison-ecommerce
     env: node
     buildCommand: "npm run build"
-    startCommand: "node .next/standalone/server.js"
+    startCommand: "./render-start.sh"
     envVars:
       - key: NODE_ENV
         value: production
       - key: DATABASE_URL
-        value: "file:./production.db"
+        value: "file:./dev.db"
         # For PostgreSQL production: 
         # value: "postgresql://username:password@host:port/database"
+      - key: PORT
+        value: "10000"
+      - key: HOST
+        value: "0.0.0.0"
       - key: NEXT_PUBLIC_API_URL
         value: "https://maison-ecommerce.onrender.com"
     healthCheck:
