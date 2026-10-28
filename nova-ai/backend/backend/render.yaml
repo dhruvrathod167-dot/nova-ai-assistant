@@ -1,0 +1,36 @@
+# Render Configuration for NOVA AI Backend
+services:
+  - type: web
+    name: nova-ai-backend
+    env: python
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "./render-start.sh"
+    envVars:
+      - key: SECRET_KEY
+        value: your_production_secret_key_here
+      - key: ENVIRONMENT
+        value: production
+      - key: DATABASE_URL
+        value: sqlite+aiosqlite:///./nova_ai.db
+      - key: AI_PROVIDER
+        value: openai
+      - key: OPENAI_API_KEY
+        generateValue: true
+        sync: false
+      - key: OPENROUTER_API_KEY
+        generateValue: true
+        sync: false
+      - key: PORT
+        value: 10000
+    healthCheck:
+      path: /healthz
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    disk:
+      sizeGB: 1
+    cpu:
+      kind: shared
+      units: 1
+    memory:
+      sizeGB: 1
