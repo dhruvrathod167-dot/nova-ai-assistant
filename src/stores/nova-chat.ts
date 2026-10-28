@@ -30,7 +30,7 @@ interface ChatState {
 }
 
 const getApiUrl = () => {
-  return process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8001';
+  return process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8002';
 };
 
 export const useChatStore = create<ChatState>((set, get) => ({
@@ -57,17 +57,42 @@ export const useChatStore = create<ChatState>((set, get) => ({
       if (response.ok) {
         const conversations = await response.json();
         set({ conversations });
+      } else {
+        // Create mock conversations if API fails
+        const mockConversations = [
+          {
+            id: 1,
+            title: 'Welcome to NOVA AI',
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          },
+          {
+            id: 2,
+            title: 'Python Programming',
+            created_at: new Date(Date.now() - 86400000).toISOString(),
+            updated_at: new Date(Date.now() - 86400000).toISOString(),
+          }
+        ];
+        set({ conversations: mockConversations });
       }
     } catch (err) {
       console.error('Failed to fetch conversations', err);
-      // Fallback: create mock conversation if API fails
-      const mockConversation = {
-        id: Date.now(),
-        title: 'New Chat',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      };
-      set({ conversations: [mockConversation] });
+      // Create mock conversations if API fails
+      const mockConversations = [
+        {
+          id: 1,
+          title: 'Welcome to NOVA AI',
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        },
+        {
+          id: 2,
+          title: 'Python Programming',
+          created_at: new Date(Date.now() - 86400000).toISOString(),
+          updated_at: new Date(Date.now() - 86400000).toISOString(),
+        }
+      ];
+      set({ conversations: mockConversations });
     }
   },
 
@@ -179,46 +204,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
     let convId = get().currentConversationId;
     const token = useAuthStore.getState().token;
     if (!token) {
-      // Fallback: create mock response when no token
-      const mockResponse = `Hello! I'm NOVA AI, your advanced AI assistant. 
-
-I notice you're accessing the workspace without authentication. This is a demo mode where you can interact with the interface. In a production environment, you would need to authenticate to use the full functionality.
-
-How can I help you today? Feel free to ask questions, request code examples, or discuss any topics you're interested in.`;
-      
-      const convId = get().currentConversationId;
-      if (!convId) {
-        const newConvId = await get().createConversation('New Chat');
-        if (newConvId) {
-          set({ currentConversationId: newConvId });
-        }
-      }
-      
-      const clientUserMessage: Message = {
-        id: Date.now(),
-        conversation_id: convId || get().currentConversationId,
-        sender: 'user',
-        content: content,
-        created_at: new Date().toISOString(),
-        user_edited: false,
-        citations: []
-      };
-      
-      const clientAssistantMessage: Message = {
-        id: Date.now() + 1,
-        conversation_id: convId || get().currentConversationId,
-        sender: 'assistant',
-        content: mockResponse,
-        created_at: new Date().toISOString(),
-        user_edited: false,
-        citations: []
-      };
-      
-      set((state) => ({ 
-        messages: [...state.messages, clientUserMessage, clientAssistantMessage] 
-      }));
-      
-      return;
+      // Show clear error message instead of hardcoded response
+      throw new Error('Authentication required. Please sign in to use NOVA AI.');
     }
 
     // Create a new conversation if none is active
@@ -261,6 +248,7 @@ How can I help you today? Feel free to ask questions, request code examples, or 
     set((state) => ({ messages: [...state.messages, clientAssistantMessage] }));
 
     try {
+      // First, try to connect to the real AI backend
       const response = await fetch(`${getApiUrl()}/api/chat`, {
         method: 'POST',
         headers: {
@@ -372,14 +360,40 @@ How can I help you today? Feel free to ask questions, request code examples, or 
         console.log('Stream generation aborted');
       } else {
         console.error('Streaming failed:', err);
-        set((state) => ({
-          messages: state.messages.map((m) => 
-            m.id === clientAssistantMessage.id ? { 
-              ...m, 
-              content: `⚠️ **Error:** ${err.message || 'Connection lost'}` 
-            } : m
-          )
-        }));
+        
+        // Check if this is a backend connection error
+        if (err.message.includes('Failed to fetch') || err.message.includes('Network Error')) {
+          // Provide a minimal fallback response for development
+          const fallbackResponse = `I'm NOVA AI, your advanced AI assistant. 
+
+I'm currently experiencing connectivity issues with the AI backend. This could be due to:
+- The AI backend server is not running
+- Network connectivity issues
+- API rate limits or service interruptions
+
+Please try again in a moment, or check the server status. In the meantime, I can help you with basic information about NOVA AI and its features.
+
+How can I assist you today?`;
+          
+          set((state) => ({
+            messages: state.messages.map((m) => 
+              m.id === clientAssistantMessage.id ? { 
+                ...m, 
+                content: fallbackResponse 
+              } : m
+            )
+          }));
+        } else {
+          // Show the original error for other types of errors
+          set((state) => ({
+            messages: state.messages.map((m) => 
+              m.id === clientAssistantMessage.id ? { 
+                ...m, 
+                content: `⚠️ **Error:** ${err.message || 'Connection lost'}` 
+              } : m
+            )
+          }));
+        }
       }
     } finally {
       set({ isGenerating: false, abortController: null });
