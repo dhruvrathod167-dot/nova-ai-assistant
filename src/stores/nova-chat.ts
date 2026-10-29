@@ -118,7 +118,9 @@ export const useChatStore = create<ChatState>((set, get) => ({
 
   createConversation: async (title) => {
     const token = useAuthStore.getState().token;
-    if (!token) return null;
+    if (!token) {
+      throw new Error('Authentication required. Please sign in to use NOVA AI.');
+    }
     try {
       const response = await fetch(`${getApiUrl()}/api/conversations`, {
         method: 'POST',
@@ -144,6 +146,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
     return null;
   },
 
+  
   renameConversation: async (id, title) => {
     const token = useAuthStore.getState().token;
     if (!token) return;
@@ -204,7 +207,6 @@ export const useChatStore = create<ChatState>((set, get) => ({
     let convId = get().currentConversationId;
     const token = useAuthStore.getState().token;
     if (!token) {
-      // Show clear error message instead of hardcoded response
       throw new Error('Authentication required. Please sign in to use NOVA AI.');
     }
 
@@ -363,23 +365,28 @@ export const useChatStore = create<ChatState>((set, get) => ({
         
         // Check if this is a backend connection error
         if (err.message.includes('Failed to fetch') || err.message.includes('Network Error')) {
-          // Provide a minimal fallback response for development
-          const fallbackResponse = `I'm NOVA AI, your advanced AI assistant. 
+          // Show a technical error message instead of pretending to be an AI
+          const errorMessage = `⚠️ **Connection Error:**
 
-I'm currently experiencing connectivity issues with the AI backend. This could be due to:
-- The AI backend server is not running
-- Network connectivity issues
-- API rate limits or service interruptions
+Unable to connect to the NOVA AI backend. This could be due to:
 
-Please try again in a moment, or check the server status. In the meantime, I can help you with basic information about NOVA AI and its features.
+- The AI backend server is not running (expected: http://127.0.0.1:8002)
+- Network connectivity issues  
+- API service interruptions
 
-How can I assist you today?`;
+**Troubleshooting:**
+1. Ensure the NOVA AI backend is running
+2. Check your network connection
+3. Verify the backend is accessible at http://127.0.0.1:8002
+4. Try again in a few moments
+
+For technical support, check the server logs or documentation.`;
           
           set((state) => ({
             messages: state.messages.map((m) => 
               m.id === clientAssistantMessage.id ? { 
                 ...m, 
-                content: fallbackResponse 
+                content: errorMessage 
               } : m
             )
           }));

@@ -30,16 +30,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   initialize: async () => {
     const { token } = get();
     if (!token) {
-      // Create a mock user for development when no token exists
-      const mockUser: User = {
-        id: 1,
-        email: 'demo@novaai.com',
-        name: 'Demo User',
-        is_active: true,
-        created_at: new Date().toISOString(),
-        last_login: new Date().toISOString(),
-      };
-      set({ user: mockUser, isAuthenticated: true, isInitialized: true, error: null });
+      // No token available - user needs to sign in
+      set({ isInitialized: true, error: null });
       return;
     }
 
@@ -53,28 +45,12 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         const user = await response.json();
         set({ user, isAuthenticated: true, isInitialized: true, error: null });
       } else {
-        // Token invalid/expired, create mock user
-        const mockUser: User = {
-          id: 1,
-          email: 'demo@novaai.com',
-          name: 'Demo User',
-          is_active: true,
-          created_at: new Date().toISOString(),
-          last_login: new Date().toISOString(),
-        };
-        set({ user: mockUser, isAuthenticated: true, isInitialized: true, error: null });
+        // Token invalid/expired
+        set({ user: null, isAuthenticated: false, isInitialized: true, error: null });
       }
     } catch (err) {
-      // Backend unavailable, create mock user for development
-      const mockUser: User = {
-        id: 1,
-        email: 'demo@novaai.com',
-        name: 'Demo User',
-        is_active: true,
-        created_at: new Date().toISOString(),
-        last_login: new Date().toISOString(),
-      };
-      set({ user: mockUser, isAuthenticated: true, isInitialized: true, error: null });
+      console.error('Failed to validate token:', err);
+      set({ isInitialized: true, error: null });
     }
   },
 
@@ -102,18 +78,9 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       await get().initialize();
       return true;
     } catch (err) {
-      // Backend unavailable, create mock user for development
-      console.warn('Backend unavailable, using demo mode');
-      const mockUser: User = {
-        id: 1,
-        email: email || 'demo@novaai.com',
-        name: 'Demo User',
-        is_active: true,
-        created_at: new Date().toISOString(),
-        last_login: new Date().toISOString(),
-      };
-      set({ user: mockUser, isAuthenticated: true, error: null });
-      return true;
+      console.error('Authentication failed:', err);
+      set({ error: 'Authentication failed. Please check your connection and try again.' });
+      return false;
     }
   },
 
