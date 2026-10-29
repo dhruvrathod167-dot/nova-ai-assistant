@@ -17,7 +17,7 @@ export default function ChatPage() {
   const { isInitialized, isAuthenticated, initialize, login, register, error: authError, clearError } = useAuthStore();
   const { 
     messages, selectConversation, fetchConversations, fetchSettings, 
-    fetchModels, currentConversationId, conversations, sendMessage
+    fetchModels, currentConversationId, conversations, sendMessage, isGenerating
   } = useChatStore();
 
   // Auth screen forms state
@@ -31,6 +31,12 @@ export default function ChatPage() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
+  const isUserNearBottom = useRef(true);
+  const isAutoScrolling = useRef(false);
+  const lastScrollTop = useRef(0);
+  const animationFrameRef = useRef<number>();
+  const streamingScrollTimeout = useRef<NodeJS.Timeout>();
 
   // Initialize Auth & global configurations on load
   useEffect(() => {
@@ -46,16 +52,110 @@ export default function ChatPage() {
     }
   }, [isAuthenticated]);
 
-  // Scroll chat to bottom on new messages
+  // Handle scroll events for user interaction detection
   useEffect(() => {
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ 
-        behavior: 'smooth',
-        block: 'end',
-        inline: 'nearest'
-      });
+    const chatContainer = chatContainerRef.current;
+    if (!chatContainer) return;
+
+    const handleScroll = () => {
+      const { scrollTop, scrollHeight, clientHeight } = chatContainer;
+      const threshold = 100; // Distance from bottom to consider "near bottom"
+      const isNearBottom = scrollHeight - scrollTop - clientHeight <= threshold;
+      
+      // Store scroll position for comparison
+      lastScrollTop.current = scrollTop;
+      
+      // Update user near bottom state
+      isUserNearBottom.current = isNearBottom;
+      
+      // Clear any pending streaming scroll if user manually scrolls
+      if (streamingScrollTimeout.current) {
+        clearTimeout(streamingScrollTimeout.current);
+        streamingScrollTimeout.current = undefined;
+      }
+    };
+
+    chatContainer.addEventListener('scroll', handleScroll);
+    return () => chatContainer.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Enhanced streaming scroll behavior
+  useEffect(() => {
+    if (!isGenerating || !isUserNearBottom.current) return;
+    
+    // Set up continuous scrolling during streaming
+    const performStreamingScroll = () => {
+      if (isGenerating && isUserNearBottom.current && chatContainerRef.current) {
+        // Instant scroll for streaming
+        chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+        // Schedule next scroll
+        streamingScrollTimeout.current = setTimeout(performStreamingScroll, 50);
+      }
+    };
+    
+    // Start streaming scroll
+    streamingScrollTimeout.current = setTimeout(performStreamingScroll, 50);
+    
+    return () => {
+      if (streamingScrollTimeout.current) {
+        clearTimeout(streamingScrollTimeout.current);
+      }
+    };
+  }, [isGenerating]);
+
+  // Enhanced scroll function with performance optimization
+  const scrollToBottom = (useSmooth = true) => {
+    if (messagesEndRef.current && chatContainerRef.current) {
+      isAutoScrolling.current = true;
+      
+      if (useSmooth) {
+        messagesEndRef.current.scrollIntoView({ 
+          behavior: 'smooth',
+          block: 'end',
+          inline: 'nearest'
+        });
+      } else {
+        // Instant scroll for performance during streaming
+        chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+      }
+      
+      // Reset auto-scroll flag after animation
+      setTimeout(() => {
+        isAutoScrolling.current = false;
+      }, useSmooth ? 1000 : 50);
     }
-  }, [messages]);
+  };
+
+  // Scroll to bottom when new messages are added
+  useEffect(() => {
+    if (!isUserNearBottom.current) return; // Don't scroll if user scrolled away
+    
+    // Use requestAnimationFrame for better performance
+    if (animationFrameRef.current) {
+      cancelAnimationFrame(animationFrameRef.current);
+    }
+    
+    animationFrameRef.current = requestAnimationFrame(() => {
+      // Check if we have new messages (not just existing ones updating)
+      const lastMessage = messages[messages.length - 1];
+      if (lastMessage && lastMessage.sender === 'user') {
+        // User message - always scroll smoothly
+        scrollToBottom(true);
+      } else if (lastMessage && lastMessage.sender === 'assistant' && isGenerating) {
+        // AI streaming - use instant scroll for better performance during streaming
+        // Only scroll if we're actively streaming and user hasn't scrolled away
+        if (isUserNearBottom.current || isAutoScrolling.current) {
+          scrollToBottom(false);
+        }
+      }
+    });
+    
+    return () => {
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
+    };
+  }, [messages, isGenerating]);
 
   const handleAuthSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -82,6 +182,23 @@ export default function ChatPage() {
 
   const handleSuggestedPrompt = (prompt: string) => {
     sendMessage(prompt);
+  };
+
+  // Scroll to bottom button component
+  const ScrollToBottomButton = () => {
+    if (!isUserNearBottom.current && messages.length > 0) {
+      return (
+        <div className="fixed bottom-20 right-4 z-50">
+          <button
+            onClick={() => scrollToBottom(true)}
+            className="px-3 py-2 bg-nova-accent hover:bg-nova-accent-hover text-white rounded-lg shadow-lg transition-all duration-200 active:scale-95"
+          >
+            ↓ Latest
+          </button>
+        </div>
+      );
+    }
+    return null;
   };
 
   // 1. Loading screen
@@ -253,7 +370,10 @@ export default function ChatPage() {
         </header>
 
         {/* Message Panel / Welcome View */}
-        <div className="flex-1 overflow-y-auto min-h-0 max-h-[calc(100vh-200px)]">
+        <div 
+          ref={chatContainerRef}
+          className="flex-1 overflow-y-auto min-h-0 max-h-[calc(100vh-200px)]"
+        >
           {messages.length === 0 ? (
             <div className="flex flex-col items-center justify-center min-h-full px-6 py-12 text-center max-w-2xl mx-auto">
               <div className="flex items-center justify-center w-14 h-14 rounded-2xl bg-nova-accent/15 text-nova-accent border border-nova-accent/20 mb-6 shadow-sm">
@@ -308,6 +428,9 @@ export default function ChatPage() {
 
         {/* Input area */}
         <ChatComposer />
+
+        {/* Scroll to bottom button */}
+        <ScrollToBottomButton />
 
       </div>
 
