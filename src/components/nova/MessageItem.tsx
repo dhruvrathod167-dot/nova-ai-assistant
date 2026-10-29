@@ -18,7 +18,7 @@ const components = {
     if (!inline && language) {
       return (
         <div className="relative group my-4">
-          <div className="absolute top-2 right-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
+          <div className="absolute top-2 right-2 z-50 opacity-0 group-hover:opacity-100 transition-opacity">
             <button
               onClick={() => navigator.clipboard.writeText(String(children).replace(/\n$/, ''))}
               className="px-2 py-1 text-xs bg-gray-800 dark:bg-gray-700 text-white rounded hover:bg-gray-700 dark:hover:bg-gray-600 transition-colors"
@@ -35,6 +35,12 @@ const components = {
               borderRadius: '0.5rem',
               fontSize: '0.875em',
               lineHeight: '1.5',
+              background: document.documentElement.classList.contains('dark') ? '#1e293b' : '#f8fafc',
+              color: document.documentElement.classList.contains('dark') ? '#e2e8f0' : '#1e293b',
+              boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+              overflow: 'visible',
+              wordBreak: 'break-word',
+              overflowWrap: 'break-word',
             }}
             {...props}
           >
@@ -45,13 +51,13 @@ const components = {
     }
     
     return (
-      <code className="px-1.5 py-0.5 rounded bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 text-sm font-mono" {...props}>
+      <code className="px-1.5 py-0.5 rounded bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 text-sm font-mono break-all overflow-wrap-anywhere" {...props}>
         {children}
       </code>
     );
   },
   pre({ children }: any) {
-    return <div className="my-4">{children}</div>;
+    return <div className="my-4 overflow-x-auto overflow-y-visible">{children}</div>;
   },
 };
 
@@ -81,7 +87,7 @@ export const MessageItem: React.FC<MessageItemProps> = ({ message }) => {
   };
 
   return (
-    <div className={`flex w-full py-6 px-4 md:px-6 gap-4 border-b border-gray-150/40 dark:border-gray-800/30 ${
+    <div className={`flex w-full py-6 px-4 md:px-6 gap-4 border-b border-gray-150/40 dark:border-gray-800/30 min-w-0 ${
       isAssistant ? 'bg-gray-50/30 dark:bg-sidebarbg-dark/10' : 'bg-transparent'
     }`}>
       
@@ -95,7 +101,7 @@ export const MessageItem: React.FC<MessageItemProps> = ({ message }) => {
       </div>
 
       {/* Message Body Content */}
-      <div className="flex-1 min-w-0 flex flex-col gap-3">
+      <div className="flex-1 min-w-0 flex flex-col gap-3 break-words overflow-visible">
         {/* Author header */}
         <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
           <span className="font-semibold text-gray-700 dark:text-gray-300">
@@ -114,7 +120,7 @@ export const MessageItem: React.FC<MessageItemProps> = ({ message }) => {
         </div>
 
         {/* Text Markdown Render */}
-        <div className={`prose dark:prose-invert max-w-none text-sm leading-relaxed text-gray-800 dark:text-gray-200 break-words ${
+        <div className={`prose dark:prose-invert max-w-none text-sm leading-relaxed text-gray-800 dark:text-gray-200 break-word overflow-wrap-anywhere overflow-visible ${
           isAssistant && content === 'Thinking...' ? 'streaming-cursor italic text-gray-500' : ''
         }`}>
           <ReactMarkdown components={components}>

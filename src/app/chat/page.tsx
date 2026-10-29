@@ -46,13 +46,15 @@ export default function ChatPage() {
     }
   }, [isAuthenticated]);
 
-  // TEMPORARY: Allow workspace to load without authentication for testing
-  // Remove this authentication requirement to match original behavior
-  const shouldShowWorkspace = true;
-
   // Scroll chat to bottom on new messages
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'end',
+        inline: 'nearest'
+      });
+    }
   }, [messages]);
 
   const handleAuthSubmit = async (e: React.FormEvent) => {
@@ -94,8 +96,8 @@ export default function ChatPage() {
     );
   }
 
-  // 2. Auth view - TEMPORARILY BYPASSED to match original behavior
-  if (!isAuthenticated && !shouldShowWorkspace) {
+  // 2. Auth view - Require proper authentication
+  if (!isAuthenticated) {
     return (
       <div className="relative flex items-center justify-center min-h-screen bg-chatbg-light dark:bg-chatbg-dark px-4 overflow-hidden">
         {/* Soft glowing ambient spots */}
@@ -175,11 +177,24 @@ export default function ChatPage() {
             </button>
           </form>
 
-          {/* Go back to homepage option */}
+          {/* Quick start option */}
           <div className="mt-6 text-center">
-            <Link href="/" className="text-xs text-gray-500 hover:text-nova-accent transition">
-              ← Back to NOVA AI Home
-            </Link>
+            <p className="text-xs text-gray-500 mb-2">Quick start:</p>
+            <button
+              onClick={() => {
+                setEmail('user@novaai.com');
+                setPassword('user123');
+                setAuthTab('login');
+              }}
+              className="text-xs text-nova-accent hover:text-nova-accent-hover transition font-medium"
+            >
+              Use demo credentials
+            </button>
+            <div className="mt-3 text-center">
+              <Link href="/" className="text-xs text-gray-500 hover:text-nova-accent transition">
+                ← Back to NOVA AI Home
+              </Link>
+            </div>
           </div>
         </div>
       </div>
@@ -238,7 +253,7 @@ export default function ChatPage() {
         </header>
 
         {/* Message Panel / Welcome View */}
-        <div className="flex-1 overflow-y-auto min-h-0">
+        <div className="flex-1 overflow-y-auto min-h-0 max-h-[calc(100vh-200px)]">
           {messages.length === 0 ? (
             <div className="flex flex-col items-center justify-center min-h-full px-6 py-12 text-center max-w-2xl mx-auto">
               <div className="flex items-center justify-center w-14 h-14 rounded-2xl bg-nova-accent/15 text-nova-accent border border-nova-accent/20 mb-6 shadow-sm">

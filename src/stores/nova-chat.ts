@@ -311,7 +311,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
               messages: state.messages.map((m) => {
                 if (m.id === clientAssistantMessage.id) {
                   const currentText = m.content === 'Thinking...' ? '' : m.content;
-                  return { ...m, content: currentText + parsed.chunk };
+                  const newText = currentText + parsed.chunk;
+                  return { ...m, content: newText };
                 }
                 return m;
               })
