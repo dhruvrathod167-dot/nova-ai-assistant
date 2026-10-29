@@ -1085,6 +1085,7 @@
   line-height: 1.625;
 }
 
+/* Code blocks - Light theme */
 .prose pre {
   background-color: #1e293b;
   padding: 1rem;
@@ -1092,6 +1093,7 @@
   overflow-x: auto;
   margin: 0.75rem 0;
   border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #e2e8f0;
 }
 
 .prose code {
@@ -1108,6 +1110,122 @@
   background-color: transparent;
   color: inherit;
   font-size: inherit;
+}
+
+/* Code blocks - Dark theme */
+.dark .prose pre {
+  background-color: #0f172a;
+  border-color: rgba(255, 255, 255, 0.05);
+  color: #e2e8f0;
+}
+
+.dark .prose pre code {
+  color: inherit;
+}
+
+/* Ensure syntax highlighting has proper contrast */
+.prose pre code,
+.dark .prose pre code {
+  color: #e2e8f0 !important;
+  background: transparent !important;
+}
+
+/* Syntax highlighting overrides for common languages */
+.prose pre .hljs,
+.prose pre .codehilite,
+.prose pre .highlight {
+  color: #e2e8f0;
+}
+
+.prose pre .hljs-keyword,
+.prose pre .codehilite .k,
+.prose pre .highlight .k {
+  color: #c792ea;
+}
+
+.prose pre .hljs-string,
+.prose pre .codehilite .s,
+.prose pre .highlight .s {
+  color: #a6e3a1;
+}
+
+.prose pre .hljs-function,
+.prose pre .codehilite .fn,
+.prose pre .highlight .fn {
+  color: #89b4fa;
+}
+
+.prose pre .hljs-comment,
+.prose pre .codehilite .c,
+.prose pre .highlight .c {
+  color: #6c7086;
+}
+
+.prose pre .hljs-number,
+.prose pre .codehilite .m,
+.prose pre .highlight .m {
+  color: #f9e2af;
+}
+
+.prose pre .hljs-variable,
+.prose pre .codehilite .n,
+.prose pre .highlight .n {
+  color: #e0a3b3;
+}
+
+.prose pre .hljs-operator,
+.prose pre .codehilite .o,
+.prose pre .highlight .o {
+  color: #89b4fa;
+}
+
+/* Dark theme syntax highlighting */
+.dark .prose pre .hljs,
+.dark .prose pre .codehilite,
+.dark .prose pre .highlight {
+  color: #e2e8f0;
+}
+
+.dark .prose pre .hljs-keyword,
+.dark .prose pre .codehilite .k,
+.dark .prose pre .highlight .k {
+  color: #d8b4fe;
+}
+
+.dark .prose pre .hljs-string,
+.dark .prose pre .codehilite .s,
+.dark .prose pre .highlight .s {
+  color: #86efac;
+}
+
+.dark .prose pre .hljs-function,
+.dark .prose pre .codehilite .fn,
+.dark .prose pre .highlight .fn {
+  color: #93c5fd;
+}
+
+.dark .prose pre .hljs-comment,
+.dark .prose pre .codehilite .c,
+.dark .prose pre .highlight .c {
+  color: #94a3b8;
+}
+
+.dark .prose pre .hljs-number,
+.dark .prose pre .codehilite .m,
+.dark .prose pre .highlight .m {
+  color: #fde047;
+}
+
+.dark .prose pre .hljs-variable,
+.dark .prose pre .codehilite .n,
+.dark .prose pre .highlight .n {
+  color: #fca5a5;
+}
+
+.dark .prose pre .hljs-operator,
+.dark .prose pre .codehilite .o,
+.dark .prose pre .highlight .o {
+  color: #93c5fd;
 }
 
 .prose h1, .prose h2, .prose h3 {

@@ -1,11 +1,59 @@
 import React, { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { oneLight, oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { Message } from '@/types/nova';
 import { Copy, Check, Bot, User, ChevronDown, ChevronUp, FileText } from 'lucide-react';
 
 interface MessageItemProps {
   message: Message;
 }
+
+// Custom components for ReactMarkdown
+const components = {
+  code({ node, inline, className, children, ...props }: any) {
+    const match = /language-(\w+)/.exec(className || '');
+    const language = match ? match[1] : '';
+    
+    if (!inline && language) {
+      return (
+        <div className="relative group my-4">
+          <div className="absolute top-2 right-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
+            <button
+              onClick={() => navigator.clipboard.writeText(String(children).replace(/\n$/, ''))}
+              className="px-2 py-1 text-xs bg-gray-800 dark:bg-gray-700 text-white rounded hover:bg-gray-700 dark:hover:bg-gray-600 transition-colors"
+            >
+              Copy
+            </button>
+          </div>
+          <SyntaxHighlighter
+            style={document.documentElement.classList.contains('dark') ? oneDark : oneLight}
+            language={language}
+            PreTag="div"
+            customStyle={{
+              margin: '0.75rem 0',
+              borderRadius: '0.5rem',
+              fontSize: '0.875em',
+              lineHeight: '1.5',
+            }}
+            {...props}
+          >
+            {String(children).replace(/\n$/, '')}
+          </SyntaxHighlighter>
+        </div>
+      );
+    }
+    
+    return (
+      <code className="px-1.5 py-0.5 rounded bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 text-sm font-mono" {...props}>
+        {children}
+      </code>
+    );
+  },
+  pre({ children }: any) {
+    return <div className="my-4">{children}</div>;
+  },
+};
 
 export const MessageItem: React.FC<MessageItemProps> = ({ message }) => {
   const { sender, content, citations } = message;
@@ -69,7 +117,9 @@ export const MessageItem: React.FC<MessageItemProps> = ({ message }) => {
         <div className={`prose dark:prose-invert max-w-none text-sm leading-relaxed text-gray-800 dark:text-gray-200 break-words ${
           isAssistant && content === 'Thinking...' ? 'streaming-cursor italic text-gray-500' : ''
         }`}>
-          <ReactMarkdown>{content}</ReactMarkdown>
+          <ReactMarkdown components={components}>
+            {content}
+          </ReactMarkdown>
         </div>
 
         {/* Citations references */}
