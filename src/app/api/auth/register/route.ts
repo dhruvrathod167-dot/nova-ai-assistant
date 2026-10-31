@@ -15,6 +15,9 @@ const mockUsers = [
   }
 ];
 
+// In-memory storage for created users (will reset on deployment)
+const createdUsers = new Map<number, any>();
+
 export async function POST(request: NextRequest) {
   try {
     const body: RegisterRequest = await request.json();
@@ -45,13 +48,13 @@ export async function POST(request: NextRequest) {
 
     // Create new user (in production, use proper database)
     const newUser = {
-      id: mockUsers.length + 1,
+      id: Date.now(), // Use timestamp for unique ID
       email,
       password, // In production, hash this password
       name: email.split('@')[0]
     };
     
-    mockUsers.push(newUser);
+    createdUsers.set(newUser.id, newUser);
 
     return NextResponse.json(
       { detail: 'Registration successful' },

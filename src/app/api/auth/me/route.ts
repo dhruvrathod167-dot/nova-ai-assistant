@@ -16,6 +16,9 @@ const mockUsers = [
   }
 ];
 
+// In-memory storage for created users (will reset on deployment)
+const createdUsers = new Map<number, any>();
+
 export async function GET(request: NextRequest) {
   try {
     const authHeader = request.headers.get('authorization');
@@ -47,7 +50,12 @@ export async function GET(request: NextRequest) {
     }
 
     const userId = parseInt(tokenParts[1]);
-    const user = mockUsers.find(u => u.id === userId);
+    
+    // Check both mock users and created users
+    let user = mockUsers.find(u => u.id === userId);
+    if (!user) {
+      user = createdUsers.get(userId);
+    }
     
     if (!user) {
       return NextResponse.json(
