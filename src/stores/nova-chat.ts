@@ -30,7 +30,7 @@ interface ChatState {
 }
 
 const getApiUrl = () => {
-  return process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8002';
+  return process.env.NEXT_PUBLIC_API_URL || 'https://nova-ai-assistant-3.onrender.com';
 };
 
 export const useChatStore = create<ChatState>((set, get) => ({

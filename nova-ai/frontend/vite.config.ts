@@ -8,7 +8,7 @@ export default defineConfig({
     port: 3003,
     proxy: {
       '/api': {
-        target: 'http://127.0.0.1:8002',
+        target: 'https://nova-ai-assistant-3.onrender.com',
         changeOrigin: true,
         secure: false,
         rewrite: (path) => path

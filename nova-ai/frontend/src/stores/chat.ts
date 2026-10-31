@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { Conversation, Message, UserSettings } from '../types';
 import { useAuthStore } from './auth';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8002';
+const API_URL = import.meta.env.VITE_API_URL || 'https://nova-ai-assistant-3.onrender.com';
 
 interface ChatState {
   conversations: Conversation[];

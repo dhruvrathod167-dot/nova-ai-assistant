@@ -26,7 +26,7 @@ class Settings(BaseSettings):
     # OpenRouter settings
     OPENROUTER_API_KEY: Optional[str] = None
     OPENROUTER_BASE_URL: str = Field(default="https://openrouter.ai/api/v1")
-    OPENROUTER_MODEL: str = Field(default="nvidia/nemotron-3.5-lightning:free")
+    OPENROUTER_MODEL: str = Field(default="deepseek/deepseek-chat:free")
     
     # OpenAI settings
     OPENAI_API_KEY: Optional[str] = None
@@ -70,6 +70,8 @@ class Settings(BaseSettings):
         "http://127.0.0.1:3001",
         "http://localhost:3003",
         "http://127.0.0.1:3003",
+        "https://nova-ai-assistant-3.onrender.com",
+        "https://nova-ai-assistant-3.onrender.com",
         "https://nova-ai-client.onrender.com",
         "https://nova-ai-client.onrender.com"
     ]
