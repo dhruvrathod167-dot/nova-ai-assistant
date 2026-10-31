@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { addUser } from '@/lib/auth-state';
 
 export async function POST(request: NextRequest) {
   try {
@@ -20,8 +19,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Add user to shared state
-    addUser(email, password);
+    // For demo purposes, accept any valid registration
+    // In production, you'd check for duplicates and store in a database
     
     return NextResponse.json(
       { detail: 'Registration successful' },

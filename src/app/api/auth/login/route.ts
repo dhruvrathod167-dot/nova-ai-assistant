@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { findUser } from '@/lib/auth-state';
 
 export async function POST(request: NextRequest) {
   try {
@@ -13,14 +12,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if user exists in shared state
-    if (!findUser(email, password)) {
-      return NextResponse.json(
-        { detail: 'Invalid email or password' },
-        { status: 401 }
-      );
-    }
-
+    // For demo purposes, accept any valid email/password combination
+    // In production, you'd validate against a database
+    
     // Generate token (in production, use JWT or proper auth)
     const token = `demo_token_${Date.now()}`;
 
