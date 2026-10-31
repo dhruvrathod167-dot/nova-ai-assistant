@@ -6,6 +6,7 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: true,
   },
   reactStrictMode: false,
+  output: 'standalone',
   async rewrites() {
     return [
       { source: "/women", destination: "/category/women" },
