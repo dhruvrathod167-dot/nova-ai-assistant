@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createUser } from '@/lib/simple-auth';
+import { createUser, findUserByEmail } from '@/lib/simple-auth';
 
 interface RegisterRequest {
   email: string;
@@ -25,9 +25,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    import { findUserByEmail } from '@/lib/auth-store';
-
-// Check if user already exists
+    // Check if user already exists
     const existingUser = findUserByEmail(email);
     if (existingUser) {
       return NextResponse.json(
