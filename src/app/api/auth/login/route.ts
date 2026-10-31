@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { findUserByEmail } from '@/lib/simple-auth';
+import { findUserByEmail } from '@/lib/file-auth';
 
 export async function POST(request: NextRequest) {
   try {
