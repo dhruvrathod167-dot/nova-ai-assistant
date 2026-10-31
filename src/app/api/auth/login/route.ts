@@ -34,6 +34,13 @@ export async function POST(request: NextRequest) {
         { status: 401 }
       );
     }
+    
+    if (user.password !== password) {
+      return NextResponse.json(
+        { detail: 'Invalid email or password' },
+        { status: 401 }
+      );
+    }
 
     // Generate token (in production, use JWT or proper auth)
     const token = `demo_token_${user.id}_${Date.now()}`;
