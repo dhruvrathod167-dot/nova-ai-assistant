@@ -23,9 +23,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Find user (in production, use proper database authentication)
-    const allUsers = [...mockUsers, ...Array.from(createdUsers.values())];
-    const user = allUsers.find(u => u.email === email && u.password === password);
+    import { findUserByEmail } from '@/lib/auth-store';
+
+// Find user (in production, use proper database authentication)
+    const user = findUserByEmail(email);
     
     if (!user) {
       return NextResponse.json(

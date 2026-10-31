@@ -25,9 +25,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if user already exists
-    const allUsers = [...mockUsers, ...Array.from(createdUsers.values())];
-    const existingUser = allUsers.find(u => u.email === email);
+    import { findUserByEmail } from '@/lib/auth-store';
+
+// Check if user already exists
+    const existingUser = findUserByEmail(email);
     if (existingUser) {
       return NextResponse.json(
         { detail: 'User with this email already exists' },

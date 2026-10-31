@@ -1,5 +1,5 @@
 // Shared user store for authentication
-export const mockUsers = [
+const mockUsers = [
   {
     id: 1,
     email: 'user@novaai.com',
@@ -8,7 +8,7 @@ export const mockUsers = [
   }
 ];
 
-export const createdUsers = new Map<number, any>();
+const createdUsers = new Map<number, any>();
 
 export function findUserById(id: number) {
   return mockUsers.find(u => u.id === id) || createdUsers.get(id);
@@ -24,4 +24,12 @@ export function createUser(email: string, password: string) {
   
   createdUsers.set(newUser.id, newUser);
   return newUser;
+}
+
+export function getAllUsers() {
+  return [...mockUsers, ...Array.from(createdUsers.values())];
+}
+
+export function findUserByEmail(email: string) {
+  return getAllUsers().find(u => u.email === email);
 }
