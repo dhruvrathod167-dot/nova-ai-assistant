@@ -222,7 +222,7 @@ export default function ChatPage() {
         <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-nova-accent/15 rounded-full blur-[120px]" />
         <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-indigo-500/10 rounded-full blur-[120px]" />
 
-        <div className="w-full max-w-md sm:max-w-lg p-4 sm:p-8 bg-white dark:bg-sidebarbg-dark/45 border border-gray-200 dark:border-gray-800 rounded-3xl shadow-2xl z-10 animate-in fade-in zoom-in-95 duration-200">
+        <div className="w-full max-w-md sm:max-w-lg p-4 sm:p-6 bg-white dark:bg-sidebarbg-dark/45 border border-gray-200 dark:border-gray-800 rounded-3xl shadow-2xl z-10 animate-in fade-in zoom-in-95 duration-200">
           <div className="flex flex-col items-center mb-6 sm:mb-8">
             <div className="flex items-center justify-center w-10 sm:w-12 h-10 sm:h-12 rounded-2xl bg-nova-accent shadow-xl shadow-indigo-500/20 mb-2 sm:mb-3">
               <NovaLogo />
@@ -232,7 +232,7 @@ export default function ChatPage() {
           </div>
 
           {/* Form Tabs */}
-          <div className="grid grid-cols-2 p-1 bg-gray-100 dark:bg-gray-900 rounded-xl mb-6">
+          <div className="grid grid-cols-2 p-1 bg-gray-100 dark:bg-gray-900 rounded-xl mb-4 sm:mb-6">
             <button
               onClick={() => { setAuthTab('login'); clearError(); }}
               className={`py-2 text-xs font-semibold rounded-lg transition ${authTab === 'login' ? 'bg-white dark:bg-panelbg-dark text-gray-900 dark:text-white shadow' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'}`}
@@ -258,7 +258,7 @@ export default function ChatPage() {
                   placeholder="name@domain.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 text-sm rounded-xl border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-1.5 focus:ring-nova-accent/40"
+                  className="w-full pl-10 pr-4 py-3 text-sm rounded-xl border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-1.5 focus:ring-nova-accent/40"
                 />
               </div>
             </div>
@@ -288,10 +288,10 @@ export default function ChatPage() {
             <button
               type="submit"
               disabled={authLoading}
-              className="flex items-center justify-center gap-2 w-full py-3 bg-nova-accent hover:bg-nova-accent-hover disabled:opacity-50 text-white font-semibold text-sm rounded-xl shadow-lg shadow-indigo-500/20 transition active:scale-98"
+              className="flex items-center justify-center gap-2 w-full py-3 bg-[#C9A96E] hover:bg-[#B8860B] disabled:opacity-50 text-white font-semibold text-sm rounded-xl shadow-lg shadow-[#C9A96E]/30 transition active:scale-98 border border-[#C9A96E]/20"
             >
               {authLoading ? 'Processing...' : authTab === 'login' ? 'Sign In' : 'Sign Up'}
-              <ArrowRight className="w-4 h-4" />
+              <ArrowRight className="w-4 h-4 text-white" />
             </button>
           </form>
 
@@ -333,20 +333,20 @@ export default function ChatPage() {
       />
 
       {/* Main chat window */}
-      <div className="flex-1 flex flex-col h-full overflow-hidden bg-white dark:bg-gray-900 pb-20 sm:pb-0">
+      <div className="flex-1 flex flex-col h-full overflow-hidden bg-white dark:bg-gray-900">
         
         {/* Header bar */}
-        <header className="flex items-center justify-between px-3 sm:px-4 py-2 sm:py-3 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
+        <header className="flex items-center justify-between px-3 sm:px-4 py-3 sm:py-4 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 min-h-[60px] flex-shrink-0">
           <div className="flex items-center gap-2 sm:gap-3">
             <button
               onClick={() => setIsMobileMenuOpen(true)}
-              className="p-1.5 sm:p-2 md:hidden text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-200 rounded-xl transition"
+              className="p-2 sm:p-2.5 md:hidden text-[#6B7280] hover:text-[#374151] dark:hover:text-[#E5E7EB] hover:bg-gray-100 dark:hover:bg-gray-200 rounded-xl transition border border-transparent hover:border-gray-300/30"
             >
-              <Menu className="w-4 h-4 sm:w-5 sm:h-5" />
+              <Menu className="w-5 h-5 sm:w-5 sm:h-5" />
             </button>
             <div className="flex flex-col min-w-0">
-              <span className="text-xs font-semibold text-gray-900 dark:text-gray-100 truncate max-w-[120px] sm:max-w-[200px] md:max-w-md">
-                {currentChatTitle}
+              <span className="text-xs sm:text-sm font-semibold text-gray-900 dark:text-gray-100 truncate max-w-[100px] sm:max-w-[150px] md:max-w-md">
+                {currentChatTitle || "New Chat"}
               </span>
               <span className="text-xxs text-gray-500 dark:text-gray-400">
                 NOVA AI workspace
@@ -357,78 +357,79 @@ export default function ChatPage() {
           <div className="flex items-center gap-1 sm:gap-2">
             <Link
               href="/"
-              className="text-xs px-2 sm:px-3 py-1.5 sm:py-1.5 rounded-xl border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 font-medium transition"
+              className="text-xs px-2.5 sm:px-3 py-2 sm:py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 font-medium transition"
             >
-              NOVA AI
+              Home
             </Link>
             <button
               onClick={() => selectConversation(null)}
-              className="text-xs px-2 sm:px-3 py-1.5 sm:py-1.5 rounded-xl bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 font-medium transition"
+              className="text-xs px-2.5 sm:px-3 py-2 sm:py-2.5 rounded-xl bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 font-medium transition"
             >
               Reset
             </button>
           </div>
         </header>
 
-        {/* Message Panel / Welcome View */}
-        <div 
-          ref={chatContainerRef}
-          className="flex-1 overflow-y-auto min-h-0 max-h-[calc(100vh-180px)] sm:max-h-[calc(100vh-200px)]"
-        >
-          {messages.length === 0 ? (
-            <div className="flex flex-col items-center justify-center min-h-full px-6 py-12 text-center max-w-2xl mx-auto">
-              <div className="flex items-center justify-center w-14 h-14 rounded-2xl bg-nova-accent/15 text-nova-accent border border-nova-accent/20 mb-6 shadow-sm">
-                <Sparkles className="w-7 h-7" />
-              </div>
-              <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">Welcome to NOVA AI</h2>
-              <p className="text-xs text-gray-600 dark:text-gray-400 mb-8 max-w-sm">
-                How can I assist you today? Start asking questions, write programming scripts, or upload documents to query their content.
-              </p>
+        {/* Scrollable message area */}
+        <div className="flex-1 overflow-y-auto overflow-x-hidden min-h-0" style={{ scrollBehavior: 'smooth', touchAction: 'pan-y' }}>
+          <div className="pb-20 sm:pb-24 md:pb-0" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
+            {messages.length === 0 ? (
+              <div className="flex flex-col items-center justify-center min-h-full px-6 py-12 text-center max-w-2xl mx-auto">
+                <div className="flex items-center justify-center w-16 h-16 rounded-2xl bg-nova-accent/15 text-nova-accent border border-nova-accent/20 mb-8 shadow-sm">
+                  <Sparkles className="w-8 h-8" />
+                </div>
+                <h2 className="text-2xl sm:text-xl font-bold text-gray-900 dark:text-gray-100 mb-3">Welcome to NOVA AI</h2>
+                <p className="text-sm sm:text-xs text-gray-600 dark:text-gray-400 mb-10 max-w-sm mx-auto">
+                  How can I assist you today? Start asking questions, write programming scripts, or upload documents to query their content.
+                </p>
 
-              {/* Suggestions grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 w-full">
-                <button
-                  onClick={() => handleSuggestedPrompt("Explain quantum computing in extremely simple terms")}
-                  className="flex items-center gap-3 p-4 rounded-2xl border border-gray-200 dark:border-gray-700/80 hover:border-nova-accent/40 bg-white/60 dark:bg-gray-800/15 hover:bg-nova-accent/5 text-left text-xs font-medium text-gray-700 dark:text-gray-300 transition"
-                >
-                  <Compass className="w-4 h-4 text-nova-accent" />
-                  <span>Explain quantum computing in simple terms</span>
-                </button>
-                <button
-                  onClick={() => handleSuggestedPrompt("Write a clean python script to parse a nested JSON block")}
-                  className="flex items-center gap-3 p-4 rounded-2xl border border-gray-200 dark:border-gray-700/80 hover:border-nova-accent/40 bg-white/60 dark:bg-gray-800/15 hover:bg-nova-accent/5 text-left text-xs font-medium text-gray-700 dark:text-gray-300 transition"
-                >
-                  <Code className="w-4 h-4 text-nova-accent" />
-                  <span>Write a python script to parse JSON</span>
-                </button>
-                <button
-                  onClick={() => handleSuggestedPrompt("Summarize key strategies for scaling a fastAPI backend")}
-                  className="flex items-center gap-3 p-4 rounded-2xl border border-gray-200 dark:border-gray-700/80 hover:border-nova-accent/40 bg-white/60 dark:bg-gray-800/15 hover:bg-nova-accent/5 text-left text-xs font-medium text-gray-700 dark:text-gray-300 transition"
-                >
-                  <FileText className="w-4 h-4 text-nova-accent" />
-                  <span>Summarize methods to scale FastAPI</span>
-                </button>
-                <button
-                  onClick={() => handleSuggestedPrompt("What are the best practices to avoid useEffect memory leaks?")}
-                  className="flex items-center gap-3 p-4 rounded-2xl border border-gray-200 dark:border-gray-700/80 hover:border-nova-accent/40 bg-white/60 dark:bg-gray-800/15 hover:bg-nova-accent/5 text-left text-xs font-medium text-gray-700 dark:text-gray-300 transition"
-                >
-                  <HelpCircle className="w-4 h-4 text-nova-accent" />
-                  <span>React useEffect hooks best practices</span>
-                </button>
+                {/* Suggestions grid */}
+                <div className="grid grid-cols-1 gap-4 w-full max-w-sm mx-auto">
+                  <button
+                    onClick={() => handleSuggestedPrompt("Explain quantum computing in extremely simple terms")}
+                    className="flex items-center gap-3 p-4 sm:p-5 rounded-2xl border border-gray-200 dark:border-gray-700/80 hover:border-nova-accent/40 bg-white/60 dark:bg-gray-800/15 hover:bg-nova-accent/5 text-left text-sm font-medium text-gray-700 dark:text-gray-300 transition active:scale-[0.98]"
+                  >
+                    <Compass className="w-5 h-5 text-nova-accent" />
+                    <span className="text-sm">Explain quantum computing in simple terms</span>
+                  </button>
+                  <button
+                    onClick={() => handleSuggestedPrompt("Write a clean python script to parse a nested JSON block")}
+                    className="flex items-center gap-3 p-4 sm:p-5 rounded-2xl border border-gray-200 dark:border-gray-700/80 hover:border-nova-accent/40 bg-white/60 dark:bg-gray-800/15 hover:bg-nova-accent/5 text-left text-sm font-medium text-gray-700 dark:text-gray-300 transition active:scale-[0.98]"
+                  >
+                    <Code className="w-5 h-5 text-nova-accent" />
+                    <span className="text-sm">Write a python script to parse JSON</span>
+                  </button>
+                  <button
+                    onClick={() => handleSuggestedPrompt("Summarize key strategies for scaling a fastAPI backend")}
+                    className="flex items-center gap-3 p-4 sm:p-5 rounded-2xl border border-gray-200 dark:border-gray-700/80 hover:border-nova-accent/40 bg-white/60 dark:bg-gray-800/15 hover:bg-nova-accent/5 text-left text-sm font-medium text-gray-700 dark:text-gray-300 transition active:scale-[0.98]"
+                  >
+                    <FileText className="w-5 h-5 text-nova-accent" />
+                    <span className="text-sm">Summarize methods to scale FastAPI</span>
+                  </button>
+                  <button
+                    onClick={() => handleSuggestedPrompt("What are the best practices to avoid useEffect memory leaks?")}
+                    className="flex items-center gap-3 p-4 sm:p-5 rounded-2xl border border-gray-200 dark:border-gray-700/80 hover:border-nova-accent/40 bg-white/60 dark:bg-gray-800/15 hover:bg-nova-accent/5 text-left text-sm font-medium text-gray-700 dark:text-gray-300 transition active:scale-[0.98]"
+                  >
+                    <HelpCircle className="w-5 h-5 text-nova-accent" />
+                    <span className="text-sm">React useEffect hooks best practices</span>
+                  </button>
+                </div>
               </div>
-            </div>
-          ) : (
-            <div className="flex flex-col">
-              {messages.map((msg) => (
-                <MessageItem key={msg.id} message={msg} />
-              ))}
-              <div ref={messagesEndRef} />
-            </div>
-          )}
+            ) : (
+              <div className="flex flex-col">
+                {messages.map((msg) => (
+                  <MessageItem key={msg.id} message={msg} />
+                ))}
+                <div ref={messagesEndRef} />
+              </div>
+            )}
+          </div>
         </div>
 
-        {/* Input area */}
-        <ChatComposer />
+        {/* Fixed composer area */}
+        <div className="flex-shrink-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800">
+          <ChatComposer />
+        </div>
 
         {/* Scroll to bottom button */}
         <ScrollToBottomButton />

@@ -35,13 +35,13 @@ const components = {
               borderRadius: '0.5rem',
               fontSize: '0.75em sm:0.875em',
               lineHeight: '1.5',
-              background: document.documentElement.classList.contains('dark') ? '#1e293b' : '#f8fafc',
-              color: document.documentElement.classList.contains('dark') ? '#e2e8f0' : '#1e293b',
+              background: document.documentElement.classList.contains('dark') ? '#0f172a' : '#f8fafc',
+              color: document.documentElement.classList.contains('dark') ? '#f1f5f9' : '#1e293b',
               boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
               overflowX: 'auto',
               overflowY: 'visible',
-              wordBreak: 'break-word',
-              overflowWrap: 'break-word',
+              wordBreak: 'normal',
+              overflowWrap: 'normal',
               maxWidth: '100%',
               WebkitOverflowScrolling: 'touch',
             }}
@@ -54,7 +54,7 @@ const components = {
     }
     
     return (
-      <code className="px-1.5 py-0.5 rounded bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 text-sm font-mono break-all overflow-wrap-anywhere" {...props}>
+      <code className="px-1.5 py-0.5 rounded bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-200 text-sm font-mono break-all" {...props}>
         {children}
       </code>
     );
@@ -110,20 +110,20 @@ export const MessageItem: React.FC<MessageItemProps> = ({ message }) => {
           <span className="font-semibold text-gray-700 dark:text-gray-300">
             {isAssistant ? 'NOVA AI' : 'You'}
           </span>
-          <div className="flex items-center gap-1.5 opacity-60 hover:opacity-100 transition-opacity">
+          <div className="flex items-center gap-1.5 opacity-70 hover:opacity-100 transition-opacity">
             <button
               type="button"
               onClick={handleCopy}
-              className="p-1 hover:bg-gray-200/50 dark:hover:bg-gray-800/50 rounded-lg transition"
+              className="p-1.5 hover:bg-gray-200/50 dark:hover:bg-gray-800/50 rounded-lg transition border border-transparent hover:border-gray-300/30"
               title="Copy response"
             >
-              {copied ? <Check className="w-3.5 h-3.5 text-green-500" /> : <Copy className="w-3.5 h-3.5" />}
+              {copied ? <Check className="w-3.5 h-3.5 text-green-500" /> : <Copy className="w-3.5 h-3.5 text-[#6B7280] dark:text-[#D1D5DB]" />}
             </button>
           </div>
         </div>
 
         {/* Text Markdown Render */}
-        <div className={`prose dark:prose-invert max-w-none text-sm leading-relaxed text-gray-800 dark:text-gray-200 break-word overflow-wrap-anywhere overflow-visible ${
+        <div className={`prose dark:prose-invert max-w-none text-sm leading-relaxed text-gray-800 dark:text-gray-100 break-word overflow-wrap-anywhere ${
           isAssistant && (content === 'Thinking...' || content === '') ? 'streaming-cursor italic text-gray-500' : ''
         }`}>
           <ReactMarkdown components={components}>
@@ -133,9 +133,9 @@ export const MessageItem: React.FC<MessageItemProps> = ({ message }) => {
 
         {/* Citations references */}
         {isAssistant && citations && citations.length > 0 && (
-          <div className="mt-4 border-t border-gray-200/40 dark:border-gray-800/40 pt-3 flex flex-col gap-2">
-            <span className="text-xxs font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500 flex items-center gap-1">
-              <FileText className="w-3.5 h-3.5" /> Sources used in response
+          <div className="mt-4 border-t border-gray-300/50 dark:border-gray-700/50 pt-3 flex flex-col gap-2">
+            <span className="text-xxs font-bold uppercase tracking-wider text-[#9CA3AF] dark:text-[#9CA3AF] flex items-center gap-1">
+              <FileText className="w-3.5 h-3.5 text-[#9CA3AF]" /> Sources used in response
             </span>
             <div className="flex flex-col gap-1.5">
               {citations.map((cite, idx) => {
@@ -143,18 +143,18 @@ export const MessageItem: React.FC<MessageItemProps> = ({ message }) => {
                 return (
                   <div 
                     key={idx} 
-                    className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white/40 dark:bg-gray-900/30 overflow-hidden transition"
+                    className="rounded-xl border border-gray-300 dark:border-gray-700 bg-white/80 dark:bg-gray-800/60 overflow-hidden transition"
                   >
                     <button
                       type="button"
                       onClick={() => toggleCitation(idx)}
-                      className="flex items-center justify-between w-full px-3 py-2 text-xs font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100/50 dark:hover:bg-gray-800/40 transition"
+                      className="flex items-center justify-between w-full px-3 py-2 text-xs font-medium text-[#374151] dark:text-[#E5E7EB] hover:bg-gray-100/50 dark:hover:bg-gray-800/40 transition border border-transparent hover:border-gray-300/30"
                     >
                       <span className="truncate">{cite.filename}</span>
-                      {isOpen ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+                      {isOpen ? <ChevronUp className="w-3.5 h-3.5 text-[#374151] dark:text-[#E5E7EB]" /> : <ChevronDown className="w-3.5 h-3.5 text-[#374151] dark:text-[#E5E7EB]" />}
                     </button>
                     {isOpen && (
-                      <div className="px-3 pb-3 pt-1 text-xxs leading-relaxed font-mono text-gray-500 dark:text-gray-400 whitespace-pre-wrap border-t border-gray-150/40 dark:border-gray-800/30">
+                      <div className="px-3 pb-3 pt-1 text-xxs leading-relaxed font-mono text-[#6B7280] dark:text-[#D1D5DB] whitespace-pre-wrap border-t border-gray-200/50 dark:border-gray-700/50">
                         {cite.snippet}
                       </div>
                     )}

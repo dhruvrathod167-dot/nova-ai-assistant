@@ -172,16 +172,16 @@ export const Sidebar: React.FC<SidebarProps> = ({ onOpenSettings, isOpenMobile, 
                       <button
                          type="button"
                         onClick={(e) => handleStartRename(conv.id, conv.title, e)}
-                        className="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded"
+                        className="p-1.5 hover:bg-gray-200 dark:hover:bg-gray-700 text-[#6B7280] hover:text-[#374151] dark:hover:text-[#E5E7EB] rounded transition border border-transparent hover:border-gray-300/30"
                       >
-                        <Edit3 className="w-3.5 h-3.5" />
+                        <Edit3 className="w-3.5 h-3.5 text-current" />
                       </button>
                       <button
                          type="button"
                         onClick={(e) => handleDelete(conv.id, e)}
-                        className="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-400 hover:text-red-500 rounded"
+                        className="p-1.5 hover:bg-gray-200 dark:hover:bg-gray-700 text-[#6B7280] hover:text-red-500 rounded transition border border-transparent hover:border-gray-300/30"
                       >
-                        <Trash2 className="w-3.5 h-3.5" />
+                        <Trash2 className="w-3.5 h-3.5 text-current" />
                       </button>
                     </>
                   )}
@@ -196,23 +196,23 @@ export const Sidebar: React.FC<SidebarProps> = ({ onOpenSettings, isOpenMobile, 
         <div className="p-4 border-t border-gray-200 dark:border-gray-800 bg-white/40 dark:bg-gray-900/10 flex flex-col gap-2">
         
         {/* Toggle dark/light theme & settings row */}
-        <div className="flex items-center justify-between text-gray-500 dark:text-gray-400">
+        <div className="flex items-center justify-between text-[#6B7280] dark:text-[#D1D5DB]">
           <button
             type="button"
             onClick={toggleTheme}
-            className="p-2 rounded-xl hover:bg-gray-150 dark:hover:bg-gray-800 transition active:scale-95"
+            className="p-2 rounded-xl hover:bg-gray-150 dark:hover:bg-gray-800 transition active:scale-95 border border-transparent hover:border-gray-300/30"
             title="Toggle theme"
           >
-            {settings?.theme === 'dark' ? <Sun className="w-4.5 h-4.5" /> : <Moon className="w-4.5 h-4.5" />}
+            {settings?.theme === 'dark' ? <Sun className="w-4.5 h-4.5 text-current" /> : <Moon className="w-4.5 h-4.5 text-current" />}
           </button>
 
           <button
             type="button"
             onClick={onOpenSettings}
-            className="p-2 rounded-xl hover:bg-gray-150 dark:hover:bg-gray-800 transition active:scale-95"
+            className="p-2 rounded-xl hover:bg-gray-150 dark:hover:bg-gray-800 transition active:scale-95 border border-transparent hover:border-gray-300/30"
             title="Open configuration"
           >
-            <Settings className="w-4.5 h-4.5" />
+            <Settings className="w-4.5 h-4.5 text-current" />
           </button>
         </div>
 
@@ -222,14 +222,14 @@ export const Sidebar: React.FC<SidebarProps> = ({ onOpenSettings, isOpenMobile, 
             <p className="text-xs font-semibold truncate text-gray-800 dark:text-gray-200">
               {user?.email.split('@')[0]}
             </p>
-            <p className="text-xxs text-gray-400 dark:text-gray-500 truncate">
+            <p className="text-xxs text-[#9CA3AF] dark:text-[#9CA3AF] truncate">
               {user?.email}
             </p>
           </div>
           <button
             type="button"
             onClick={logout}
-            className="p-1.5 hover:bg-red-50 dark:hover:bg-red-950/20 text-gray-400 hover:text-red-500 rounded-lg transition"
+            className="p-1.5 hover:bg-red-50 dark:hover:bg-red-950/20 text-[#9CA3AF] hover:text-red-500 rounded-lg transition border border-transparent hover:border-red-300/30"
             title="Log out"
           >
             <LogOut className="w-4 h-4" />
@@ -256,7 +256,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onOpenSettings, isOpenMobile, 
             onClick={onCloseMobile}
           />
           {/* Sidebar drawer */}
-          <div className="fixed left-0 top-0 h-full w-80 max-w-full bg-white dark:bg-gray-900 shadow-2xl animate-in slide-in-from-left duration-200 z-50">
+          <div className="fixed left-0 top-0 h-full w-[80%] sm:w-[85%] max-w-full bg-white dark:bg-gray-900 shadow-2xl animate-in slide-in-from-left duration-200 z-50">
             {sidebarContent}
           </div>
         </div>

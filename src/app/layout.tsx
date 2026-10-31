@@ -47,7 +47,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#FAFAFA] text-foreground`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#FAFAFA] text-foreground overflow-x-hidden`}
       >
         {children}
         <Toaster />

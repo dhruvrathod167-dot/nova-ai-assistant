@@ -323,8 +323,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
                 m.id === clientAssistantMessage.id ? { 
                   ...m, 
                   id: parsed.message_id, 
-                  citations: parsed.citations || [],
-                  content: parsed.content || m.content
+                  citations: parsed.citations || []
+                  // Keep the accumulated content from chunks - don't overwrite with parsed.content
                 } : m
               )
             }));

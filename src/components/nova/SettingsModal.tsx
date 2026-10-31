@@ -58,8 +58,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-      <div className="flex flex-col w-full max-w-2xl h-[550px] bg-sidebarbg-light dark:bg-sidebarbg-dark border border-gray-200 dark:border-gray-800 rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-sm">
+      <div className="flex flex-col w-full max-w-2xl h-[85vh] max-h-[600px] bg-sidebarbg-light dark:bg-sidebarbg-dark border border-gray-200 dark:border-gray-800 rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
         
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-800 bg-chatbg-light dark:bg-chatbg-dark">
@@ -69,7 +69,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
           </div>
           <button 
             onClick={onClose} 
-            className="p-1 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+            className="p-1 text-[#6B7280] hover:text-[#374151] dark:hover:text-[#E5E7EB] rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition border border-transparent hover:border-gray-300/30"
           >
             <X className="w-5 h-5" />
           </button>
@@ -78,13 +78,13 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
         {/* Inner Content Layout */}
         <div className="flex flex-1 overflow-hidden">
           {/* Tabs Sidebar */}
-          <div className="w-48 border-r border-gray-200 dark:border-gray-800 p-4 flex flex-col gap-2 bg-gray-50/50 dark:bg-gray-900/35">
+          <div className="w-48 border-r border-gray-200 dark:border-gray-800 p-3 sm:p-4 flex flex-col gap-2 bg-gray-50/50 dark:bg-gray-900/35">
             <button
               onClick={() => setActiveTab('general')}
               className={`flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-medium transition ${
                 activeTab === 'general'
                   ? 'bg-nova-accent text-white shadow-md'
-                  : 'text-gray-600 dark:text-gray-400 hover:bg-gray-150 dark:hover:bg-gray-800/60'
+                  : 'text-[#6B7280] dark:text-[#9CA3AF] hover:bg-gray-150 dark:hover:bg-gray-800/60 border border-transparent hover:border-gray-300/30'
               }`}
             >
               <Sun className="w-4 h-4" />
@@ -95,7 +95,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
               className={`flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-medium transition ${
                 activeTab === 'model'
                   ? 'bg-nova-accent text-white shadow-md'
-                  : 'text-gray-600 dark:text-gray-400 hover:bg-gray-150 dark:hover:bg-gray-800/60'
+                  : 'text-[#6B7280] dark:text-[#9CA3AF] hover:bg-gray-150 dark:hover:bg-gray-800/60 border border-transparent hover:border-gray-300/30'
               }`}
             >
               <Bot className="w-4 h-4" />
@@ -106,7 +106,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
               className={`flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-medium transition ${
                 activeTab === 'system'
                   ? 'bg-nova-accent text-white shadow-md'
-                  : 'text-gray-600 dark:text-gray-400 hover:bg-gray-150 dark:hover:bg-gray-800/60'
+                  : 'text-[#6B7280] dark:text-[#9CA3AF] hover:bg-gray-150 dark:hover:bg-gray-800/60 border border-transparent hover:border-gray-300/30'
               }`}
             >
               <Sliders className="w-4 h-4" />
@@ -115,7 +115,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
           </div>
 
           {/* Form Content Area */}
-          <div className="flex-1 p-6 overflow-y-auto bg-chatbg-light dark:bg-chatbg-dark">
+          <div className="flex-1 p-4 sm:p-6 overflow-y-auto bg-chatbg-light dark:bg-chatbg-dark">
             {activeTab === 'general' && (
               <div className="flex flex-col gap-5">
                 <div>
@@ -263,7 +263,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
         <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900/60">
           <button
             onClick={onClose}
-            className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition"
+            className="px-4 py-2 text-sm font-medium text-[#374151] dark:text-[#E5E7EB] hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition border border-transparent hover:border-gray-300/30"
           >
             Cancel
           </button>

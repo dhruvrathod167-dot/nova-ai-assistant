@@ -73,7 +73,7 @@ export const ChatComposer: React.FC = () => {
   };
 
   return (
-    <div className="w-full flex flex-col gap-2 p-3 sm:p-4 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800">
+    <div className="w-full flex flex-col gap-3 p-3 sm:p-4 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 pb-4 sm:pb-4">
       
       {/* Attachment previews */}
       {uploadedFiles.length > 0 && (
@@ -110,7 +110,7 @@ export const ChatComposer: React.FC = () => {
       )}
 
       {/* Main Composer Box */}
-      <form onSubmit={handleSend} className="relative flex flex-col w-full rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-800 focus-within:ring-2 focus-within:ring-nova-accent/35 focus-within:border-nova-accent transition-all duration-150">
+      <form onSubmit={handleSend} className="relative flex flex-col w-full rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 focus-within:ring-2 focus-within:ring-nova-accent/35 focus-within:border-nova-accent transition-all duration-150">
         
         {/* Text Field */}
         <textarea
@@ -120,12 +120,12 @@ export const ChatComposer: React.FC = () => {
           onKeyDown={handleKeyDown}
           placeholder="Ask NOVA AI anything..."
           rows={1}
-          className="w-full pl-3 sm:pl-4 pr-12 sm:pr-16 pt-3 pb-3 sm:pb-12 bg-transparent text-gray-900 dark:text-gray-100 placeholder-gray-400 text-sm focus:outline-none resize-none min-h-[44px] max-h-32"
+          className="w-full pl-3 sm:pl-4 pr-14 sm:pr-16 pt-3 pb-4 sm:pb-12 bg-transparent text-gray-900 dark:text-gray-100 placeholder-gray-400 text-sm focus:outline-none resize-none min-h-[52px] max-h-32"
         />
 
         {/* Controls Toolbar */}
-        <div className="absolute left-2 sm:left-3 bottom-2 sm:bottom-3 right-2 sm:right-3 flex items-center justify-between pointer-events-none">
-          <div className="flex items-center gap-1 sm:gap-2 pointer-events-auto">
+        <div className="absolute left-3 sm:left-3 bottom-4 sm:bottom-3 right-12 sm:right-3 flex items-center justify-between pointer-events-none">
+          <div className="flex items-center gap-1.5 sm:gap-2 pointer-events-auto">
             {/* File upload trigger */}
             <input
               type="file"
@@ -138,20 +138,20 @@ export const ChatComposer: React.FC = () => {
               type="button"
               onClick={() => fileInputRef.current?.click()}
               disabled={isUploading}
-              className={`p-1.5 sm:p-2 rounded-xl text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-200/60 dark:hover:bg-gray-800 transition ${isUploading ? 'opacity-50' : ''}`}
+              className={`p-1.5 sm:p-2 rounded-xl text-[#6B7280] hover:text-[#374151] hover:bg-gray-200/60 dark:hover:bg-gray-800 transition ${isUploading ? 'opacity-50' : ''} border border-transparent hover:border-gray-300/50`}
               title="Attach Document (PDF, TXT, DOCX, MD)"
             >
-              <Paperclip className={`w-4 h-4 ${isUploading ? 'animate-pulse' : ''}`} />
+              <Paperclip className={`w-4 h-4 ${isUploading ? 'animate-pulse' : ''} text-current`} />
             </button>
 
             {/* Model Select dropdown */}
             {settings && models.length > 0 && (
-              <div className="flex items-center gap-1 px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-xs sm:text-xxs font-semibold text-gray-500 dark:text-gray-400">
-                <Sparkles className="w-3 h-3 text-nova-accent" />
+              <div className="flex sm:flex items-center gap-1 px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-xl bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-xs sm:text-xxs font-semibold text-[#6B7280] dark:text-[#D1D5DB] min-w-fit">
+                <Sparkles className="w-3 h-3 text-[#C9A96E] flex-shrink-0" />
                 <select
                   value={settings.model}
                   onChange={handleModelChange}
-                  className="bg-transparent focus:outline-none cursor-pointer font-sans"
+                  className="bg-transparent focus:outline-none cursor-pointer font-sans pr-1 text-current"
                 >
                   {models.map((m) => (
                     <option key={m} value={m}>{m}</option>
@@ -166,18 +166,18 @@ export const ChatComposer: React.FC = () => {
               <button
                 type="button"
                 onClick={stopGeneration}
-                className="flex items-center justify-center w-7 sm:w-8 h-7 sm:h-8 rounded-xl bg-red-500 hover:bg-red-600 text-white shadow-md shadow-red-500/10 active:scale-95 transition"
+                className="flex items-center justify-center w-9 sm:w-8 h-9 sm:h-8 rounded-xl bg-[#DC2626] hover:bg-[#B91C1C] text-white shadow-lg shadow-[#DC2626]/30 active:scale-95 transition-all duration-200 border border-[#DC2626]/20"
                 title="Stop generation"
               >
-                <StopCircle className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
+                <StopCircle className="w-5 h-5 sm:w-4.5 sm:h-4.5 text-white" />
               </button>
             ) : (
               <button
                 type="submit"
                 disabled={!input.trim() && uploadedFiles.length === 0}
-                className="flex items-center justify-center w-7 sm:w-8 h-7 sm:h-8 rounded-xl bg-nova-accent hover:bg-nova-accent-hover text-white shadow-md shadow-indigo-500/10 active:scale-95 disabled:opacity-40 disabled:hover:bg-nova-accent disabled:active:scale-100 transition duration-150"
+                className="flex items-center justify-center w-9 sm:w-8 h-9 sm:h-8 rounded-xl bg-[#C9A96E] hover:bg-[#B8860B] text-white shadow-lg shadow-[#C9A96E]/30 active:scale-95 disabled:opacity-50 disabled:hover:bg-[#C9A96E] disabled:active:scale-100 transition-all duration-150 border border-[#C9A96E]/20"
               >
-                <ArrowUp className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
+                <ArrowUp className="w-5 h-5 sm:w-4.5 sm:h-4.5 text-white" />
               </button>
             )}
           </div>
