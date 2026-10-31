@@ -18,8 +18,14 @@ export const metadata: Metadata = {
   description: "ChatGPT-style production chat workspace",
   keywords: ["AI chat", "artificial intelligence", "chatbot", "workspace", "productivity"],
   icons: {
-    icon: "https://z-cdn.chatglm.cn/z-ai/static/logo.svg",
+    icon: "/icon",
+    apple: [
+      { url: '/icon-192x192.png', sizes: '192x192', type: 'image/png' },
+      { url: '/icon-512x512.png', sizes: '512x512', type: 'image/png' },
+    ],
+    shortcut: "/icon",
   },
+  manifest: "/manifest.json",
   openGraph: {
     title: "NOVA AI",
     description: "ChatGPT-style production chat workspace",
