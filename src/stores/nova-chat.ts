@@ -30,6 +30,11 @@ interface ChatState {
 }
 
 const getApiUrl = () => {
+  // For development, use the local Python backend
+  if (process.env.NODE_ENV === 'development') {
+    return 'http://localhost:8002';
+  }
+  // For production, use the deployed backend
   return process.env.NEXT_PUBLIC_API_URL || 'https://nova-ai-assistant-3.onrender.com';
 };
 
@@ -247,13 +252,18 @@ export const useChatStore = create<ChatState>((set, get) => ({
 
     try {
       // First, try to connect to the real AI backend
+      const requestBody = {
+        conversation_id: convId,
+        content: content
+      };
+      
       const response = await fetch(`${getApiUrl()}/api/chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify(convId ? { conversation_id: convId, message: content } : { message: content }),
+        body: JSON.stringify(requestBody),
         signal: controller.signal
       });
 
@@ -319,8 +329,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
                 m.id === clientAssistantMessage.id ? { 
                   ...m, 
                   id: parsed.message_id, 
-                  citations: parsed.citations || []
-                  // Keep the accumulated content from chunks - don't overwrite with parsed.content
+                  citations: parsed.citations || [],
+                  content: parsed.content || m.content  // Use the final content from the backend
                 } : m
               )
             }));
