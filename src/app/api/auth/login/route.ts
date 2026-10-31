@@ -1,5 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { findUserByEmail } from '@/lib/file-auth';
+
+// Simple in-memory user store for demo
+const users = new Map<string, any>();
+
+// Add demo user
+users.set('user@novaai.com', {
+  id: 1,
+  email: 'user@novaai.com',
+  password: 'user123',
+  name: 'Demo User'
+});
 
 export async function POST(request: NextRequest) {
   try {
@@ -13,8 +23,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Find user using the same logic as register
-    const user = findUserByEmail(email);
+    // Find user in our in-memory store
+    const user = users.get(email);
     
     if (!user || user.password !== password) {
       return NextResponse.json(
