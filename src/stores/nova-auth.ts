@@ -15,7 +15,7 @@ interface AuthState {
 }
 
 const getApiUrl = () => {
-  return process.env.NEXT_PUBLIC_API_URL || '';
+  return process.env.NEXT_PUBLIC_API_URL || 'https://nova-ai-assistant-3.onrender.com';
 };
 
 export const useAuthStore = create<AuthState>((set, get) => ({

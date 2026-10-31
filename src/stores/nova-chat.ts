@@ -30,11 +30,7 @@ interface ChatState {
 }
 
 const getApiUrl = () => {
-  // For development, use the local Python backend
-  if (process.env.NODE_ENV === 'development') {
-    return 'http://localhost:8002';
-  }
-  // For production, use the deployed backend
+  // Always use the production API URL for both web and Electron
   return process.env.NEXT_PUBLIC_API_URL || 'https://nova-ai-assistant-3.onrender.com';
 };
 
