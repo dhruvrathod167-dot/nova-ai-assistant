@@ -1,29 +1,39 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-// Simple in-memory user store for demo
-const users = new Map<string, any>();
+// Simple registration logic
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json();
+    const { email, password } = body;
 
-// Add demo user
-users.set('user@novaai.com', {
-  id: 1,
-  email: 'user@novaai.com',
-  password: 'user123',
-  name: 'Demo User'
-});
+    if (!email || !password) {
+      return NextResponse.json(
+        { detail: 'Email and password are required' },
+        { status: 400 }
+      );
+    }
 
-export function findUserByEmail(email: string) {
-  return users.get(email);
-}
+    if (password.length < 6) {
+      return NextResponse.json(
+        { detail: 'Password must be at least 6 characters long' },
+        { status: 400 }
+      );
+    }
 
-export function createUser(email: string, password: string) {
-  const user = {
-    id: Date.now(),
-    email,
-    password,
-    name: email.split('@')[0]
-  };
-  users.set(email, user);
-  return user;
+    // For demo purposes, we'll just accept any valid registration
+    // In production, you'd check for duplicates and store in a database
+    
+    return NextResponse.json(
+      { detail: 'Registration successful' },
+      { status: 201 }
+    );
+  } catch (error) {
+    console.error('Registration error:', error);
+    return NextResponse.json(
+      { detail: 'Internal server error' },
+      { status: 500 }
+    );
+  }
 }
 
 interface RegisterRequest {

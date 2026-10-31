@@ -1,16 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-// Simple in-memory user store for demo
-const users = new Map<string, any>();
-
-// Add demo user
-users.set('user@novaai.com', {
-  id: 1,
-  email: 'user@novaai.com',
-  password: 'user123',
-  name: 'Demo User'
-});
-
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -23,18 +12,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Find user in our in-memory store
-    const user = users.get(email);
+    // For demo purposes, accept any valid email/password combination
+    // In production, you'd validate against a database
     
-    if (!user || user.password !== password) {
-      return NextResponse.json(
-        { detail: 'Invalid email or password' },
-        { status: 401 }
-      );
-    }
-
     // Generate token (in production, use JWT or proper auth)
-    const token = `demo_token_${user.id}_${Date.now()}`;
+    const token = `demo_token_${Date.now()}`;
 
     const response = {
       access_token: token,
