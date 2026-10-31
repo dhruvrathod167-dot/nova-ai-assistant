@@ -210,12 +210,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
       throw new Error('Authentication required. Please sign in to use NOVA AI.');
     }
 
-    // Create a new conversation if none is active
-    if (!convId) {
-      const title = content.length > 30 ? content.substring(0, 27) + '...' : content;
-      convId = await get().createConversation(title);
-      if (!convId) return;
-    }
+    // Let the backend handle conversation creation if none is active
+    // The chat API will automatically create a conversation when no conversation_id is provided
 
     // Abort existing generation
     if (get().isGenerating) {
@@ -228,7 +224,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
     // Append client-side user message immediately to the UI
     const clientUserMessage: Message = {
       id: Date.now(), // Temporary key
-      conversation_id: convId,
+      conversation_id: convId || 'temp', // Use temporary ID if no conversation yet
       sender: 'user',
       content: content,
       created_at: new Date().toISOString(),
@@ -240,7 +236,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
     // Append helper streaming container placeholder for assistant response
     const clientAssistantMessage: Message = {
       id: Date.now() + 1, // Temporary key
-      conversation_id: convId,
+      conversation_id: convId || 'temp', // Use temporary ID if no conversation yet
       sender: 'assistant',
       content: '',
       created_at: new Date().toISOString(),
@@ -257,7 +253,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({ conversation_id: convId, message: content }),
+        body: JSON.stringify(convId ? { conversation_id: convId, message: content } : { message: content }),
         signal: controller.signal
       });
 
