@@ -1,25 +1,26 @@
-# Render Configuration for Next.js E-Commerce App
+# Render Configuration for NOVA AI
 services:
   - type: web
-    name: maison-ecommerce
+    name: nova-ai-assistant
     env: node
-    buildCommand: "npm run build"
-    startCommand: "./render-start.sh"
+    buildCommand: "prisma generate && npm run build"
+    startCommand: "node .next/standalone/server.js"
     envVars:
       - key: NODE_ENV
         value: production
       - key: DATABASE_URL
-        value: "file:./dev.db"
-        # For PostgreSQL production: 
-        # value: "postgresql://username:password@host:port/database"
+        value: "file:./prisma/dev.db"
       - key: PORT
         value: "10000"
       - key: HOSTNAME
         value: "0.0.0.0"
-      - key: NEXT_PUBLIC_API_URL
-        value: "https://maison-ecommerce.onrender.com"
+      - key: NEXTAUTH_SECRET
+        generateValue: true
+        sync: false
+      - key: NEXTAUTH_URL
+        value: "https://nova-ai-assistant-1-rr7x.onrender.com"
     healthCheck:
-      path: /
+      path: /api/health
       interval: 30s
       timeout: 5s
       retries: 3

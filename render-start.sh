@@ -4,10 +4,10 @@ const { spawn } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 10000;
 const HOST = '0.0.0.0';
 
-console.log(`Starting MAISON E-Commerce server on ${HOST}:${PORT}`);
+console.log(`Starting NOVA AI server on ${HOST}:${PORT}`);
 
 // Check if the standalone server exists
 const serverPath = path.join(__dirname, '.next', 'standalone', 'server.js');
@@ -47,17 +47,17 @@ if (fs.existsSync(dbPath)) {
 startServer();
 
 function startServer() {
-// Start the Next.js server
-const serverProcess = spawn('node', [serverPath], {
-  env: { 
-    ...process.env, 
-    PORT: PORT,
-    HOSTNAME: HOST,
-    NODE_ENV: 'production'
-  },
-  stdio: 'inherit',
-  cwd: __dirname
-});
+  // Start the Next.js server
+  const serverProcess = spawn('node', [serverPath], {
+    env: { 
+      ...process.env, 
+      PORT: PORT,
+      HOSTNAME: HOST,
+      NODE_ENV: 'production'
+    },
+    stdio: 'inherit',
+    cwd: __dirname
+  });
 
   serverProcess.on('error', (error) => {
     console.error('Failed to start server:', error);
