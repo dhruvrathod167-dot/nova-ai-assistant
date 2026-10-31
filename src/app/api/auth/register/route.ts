@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { addUser } from '@/lib/auth-state';
 
-// Simple registration logic
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -20,8 +20,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // For demo purposes, we'll just accept any valid registration
-    // In production, you'd check for duplicates and store in a database
+    // Add user to shared state
+    addUser(email, password);
     
     return NextResponse.json(
       { detail: 'Registration successful' },
