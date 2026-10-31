@@ -23,19 +23,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    import { findUserByEmail } from '@/lib/auth-store';
-
-// Find user (in production, use proper database authentication)
+    // Find user (in production, use proper database authentication)
     const user = findUserByEmail(email);
     
-    if (!user) {
-      return NextResponse.json(
-        { detail: 'Invalid email or password' },
-        { status: 401 }
-      );
-    }
-    
-    if (user.password !== password) {
+    if (!user || user.password !== password) {
       return NextResponse.json(
         { detail: 'Invalid email or password' },
         { status: 401 }
