@@ -23,6 +23,8 @@ export async function GET(request: NextRequest) {
 
     // Extract user ID from token
     const tokenParts = token.split('_');
+    console.log('Token parts:', tokenParts);
+    
     if (tokenParts.length < 3) {
       return NextResponse.json(
         { detail: 'Invalid token format' },
@@ -31,6 +33,7 @@ export async function GET(request: NextRequest) {
     }
 
     const userId = parseInt(tokenParts[1]);
+    console.log('User ID:', userId);
     
     // For demo purposes, return hardcoded user data
     const user = {
