@@ -18,7 +18,7 @@ services:
         generateValue: true
         sync: false
       - key: NEXTAUTH_URL
-        value: "https://nova-ai-assistant-1-rr7x.onrender.com"
+        value: "https://nova-ai-assistant-3.onrender.com"
     healthCheck:
       path: /api/health
       interval: 30s
