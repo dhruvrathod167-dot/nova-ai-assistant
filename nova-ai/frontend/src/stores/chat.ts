@@ -217,7 +217,7 @@ try {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`
           },
-          body: JSON.stringify({ conversation_id: convId, content }),
+          body: JSON.stringify({ conversation_id: convId, message: content }),
           signal: controller.signal
         });
 
