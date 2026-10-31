@@ -14,8 +14,6 @@ export async function POST(request: NextRequest) {
 
     // For demo purposes, accept any valid email/password combination
     // In production, you'd validate against a database
-    console.log('Login attempt for:', email);
-    console.log('Password provided:', password ? 'yes' : 'no');
     
     // Generate token (in production, use JWT or proper auth)
     const token = `demo_token_${Date.now()}`;
