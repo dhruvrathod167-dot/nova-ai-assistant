@@ -1,11 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { findUserById } from '@/lib/simple-auth';
-
-interface User {
-  id: number;
-  email: string;
-  name: string;
-}
 
 export async function GET(request: NextRequest) {
   try {
@@ -39,19 +32,14 @@ export async function GET(request: NextRequest) {
 
     const userId = parseInt(tokenParts[1]);
     
-    // Find user by ID
-    const user = findUserById(userId);
+    // For demo purposes, return hardcoded user data
+    const user = {
+      id: userId,
+      email: 'user@novaai.com',
+      name: 'Demo User'
+    };
     
-    if (!user) {
-      return NextResponse.json(
-        { detail: 'User not found' },
-        { status: 404 }
-      );
-    }
-
-    // Return user data without password
-    const { password, ...userWithoutPassword } = user;
-    return NextResponse.json(userWithoutPassword);
+    return NextResponse.json(user);
   } catch (error) {
     console.error('Get user error:', error);
     return NextResponse.json(
