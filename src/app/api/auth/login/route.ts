@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { mockUsers, findUserById } from '@/lib/auth-store';
 
 interface LoginRequest {
   email: string;
@@ -9,16 +10,6 @@ interface LoginResponse {
   access_token: string;
   token_type: string;
 }
-
-// Mock user database for demo purposes
-const mockUsers = [
-  {
-    id: 1,
-    email: 'user@novaai.com',
-    password: 'user123', // In production, this would be hashed
-    name: 'Demo User'
-  }
-];
 
 export async function POST(request: NextRequest) {
   try {
@@ -33,7 +24,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Find user (in production, use proper database authentication)
-    const user = mockUsers.find(u => u.email === email && u.password === password);
+    const allUsers = [...mockUsers, ...Array.from(createdUsers.values())];
+    const user = allUsers.find(u => u.email === email && u.password === password);
     
     if (!user) {
       return NextResponse.json(

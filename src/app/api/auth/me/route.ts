@@ -1,23 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { mockUsers, createdUsers, findUserById } from '@/lib/auth-store';
 
 interface User {
   id: number;
   email: string;
   name: string;
 }
-
-// Mock user database for demo purposes
-const mockUsers = [
-  {
-    id: 1,
-    email: 'user@novaai.com',
-    password: 'user123', // In production, this would be hashed
-    name: 'Demo User'
-  }
-];
-
-// In-memory storage for created users (will reset on deployment)
-const createdUsers = new Map<number, any>();
 
 export async function GET(request: NextRequest) {
   try {
@@ -51,11 +39,8 @@ export async function GET(request: NextRequest) {
 
     const userId = parseInt(tokenParts[1]);
     
-    // Check both mock users and created users
-    let user = mockUsers.find(u => u.id === userId);
-    if (!user) {
-      user = createdUsers.get(userId);
-    }
+    // Find user by ID
+    const user = findUserById(userId);
     
     if (!user) {
       return NextResponse.json(

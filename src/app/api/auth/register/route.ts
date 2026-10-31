@@ -1,22 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { mockUsers, createdUsers, createUser } from '@/lib/auth-store';
 
 interface RegisterRequest {
   email: string;
   password: string;
 }
-
-// Mock user database for demo purposes
-const mockUsers = [
-  {
-    id: 1,
-    email: 'user@novaai.com',
-    password: 'user123', // In production, this would be hashed
-    name: 'Demo User'
-  }
-];
-
-// In-memory storage for created users (will reset on deployment)
-const createdUsers = new Map<number, any>();
 
 export async function POST(request: NextRequest) {
   try {
@@ -38,7 +26,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if user already exists
-    const existingUser = mockUsers.find(u => u.email === email);
+    const allUsers = [...mockUsers, ...Array.from(createdUsers.values())];
+    const existingUser = allUsers.find(u => u.email === email);
     if (existingUser) {
       return NextResponse.json(
         { detail: 'User with this email already exists' },
@@ -46,15 +35,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create new user (in production, use proper database)
-    const newUser = {
-      id: Date.now(), // Use timestamp for unique ID
-      email,
-      password, // In production, hash this password
-      name: email.split('@')[0]
-    };
-    
-    createdUsers.set(newUser.id, newUser);
+    // Create new user
+    const newUser = createUser(email, password);
 
     return NextResponse.json(
       { detail: 'Registration successful' },
