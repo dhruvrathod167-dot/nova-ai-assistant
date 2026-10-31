@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { findUserByEmail } from '@/lib/simple-auth';
 
 export async function POST(request: NextRequest) {
   try {
@@ -12,19 +13,25 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Simple hardcoded authentication for demo
-    if (email === 'user@novaai.com' && password === 'user123') {
-      const token = `demo_token_${Date.now()}`;
-      return NextResponse.json({
-        access_token: token,
-        token_type: 'bearer'
-      });
+    // Find user using the same logic as register
+    const user = findUserByEmail(email);
+    
+    if (!user || user.password !== password) {
+      return NextResponse.json(
+        { detail: 'Invalid email or password' },
+        { status: 401 }
+      );
     }
 
-    return NextResponse.json(
-      { detail: 'Invalid email or password' },
-      { status: 401 }
-    );
+    // Generate token (in production, use JWT or proper auth)
+    const token = `demo_token_${user.id}_${Date.now()}`;
+
+    const response = {
+      access_token: token,
+      token_type: 'bearer'
+    };
+
+    return NextResponse.json(response);
   } catch (error) {
     console.error('Login error:', error);
     return NextResponse.json(
