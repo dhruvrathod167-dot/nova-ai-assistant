@@ -3,8 +3,9 @@ import { useChatStore } from '@/stores/nova-chat';
 import { useAuthStore } from '@/stores/nova-auth';
 import { 
   MessageSquare, Plus, Search, Trash2, Edit3, Check, X, 
-  Settings, LogOut, Moon, Sun, Sparkles 
+  Settings, LogOut, Moon, Sun
 } from 'lucide-react';
+import { NovaLogo } from './NovaLogo';
 
 interface SidebarProps {
   onOpenSettings: () => void;
@@ -70,13 +71,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ onOpenSettings, isOpenMobile, 
   );
 
   const sidebarContent = (
-    <div className="flex flex-col h-full bg-sidebarbg-light dark:bg-sidebarbg-dark border-r border-gray-200 dark:border-gray-800 text-gray-800 dark:text-gray-200">
+    <div className="flex flex-col h-full bg-gray-50 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 text-gray-900 dark:text-gray-200">
       
       {/* Brand logo header */}
-      <div className="flex items-center justify-between px-5 py-4 border-b border-gray-200 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-900/10">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-200 dark:border-gray-800 bg-white/80 dark:bg-gray-900/10">
         <div className="flex items-center gap-2.5">
-          <div className="flex items-center justify-center w-8 h-8 rounded-xl bg-nova-accent text-white shadow-md shadow-indigo-500/20">
-            <Sparkles className="w-4.5 h-4.5" />
+          <div className="flex items-center justify-center w-8 h-8 rounded-xl bg-nova-accent shadow-md shadow-indigo-500/20">
+            <NovaLogo />
           </div>
           <span className="font-bold text-base tracking-wide text-gray-900 dark:text-white">NOVA AI</span>
         </div>
@@ -128,7 +129,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onOpenSettings, isOpenMobile, 
                 }}
                 className={`group flex items-center justify-between px-3 py-2.5 rounded-xl text-sm cursor-pointer border border-transparent transition active:scale-[0.99] duration-100 ${
                   isActive
-                    ? 'bg-panelbg-light dark:bg-panelbg-dark text-gray-900 dark:text-white font-medium border-gray-200 dark:border-gray-800'
+                    ? 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white font-medium border-gray-200 dark:border-gray-800'
                     : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800/50'
                 }`}
               >
@@ -140,7 +141,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onOpenSettings, isOpenMobile, 
                       value={editTitle}
                       onChange={(e) => setEditTitle(e.target.value)}
                       onClick={(e) => e.stopPropagation()}
-                      className="w-full bg-white dark:bg-chatbg-dark px-1.5 py-0.5 rounded text-xs border border-nova-accent focus:outline-none"
+                      className="w-full bg-white dark:bg-gray-800 px-1.5 py-0.5 rounded text-xs border border-nova-accent focus:outline-none"
                     />
                   ) : (
                     <span className="truncate text-xs">{conv.title}</span>
@@ -192,7 +193,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onOpenSettings, isOpenMobile, 
       </div>
 
       {/* Footer User Profile & Settings */}
-      <div className="p-4 border-t border-gray-200 dark:border-gray-800 bg-gray-50/40 dark:bg-gray-900/10 flex flex-col gap-2">
+        <div className="p-4 border-t border-gray-200 dark:border-gray-800 bg-white/40 dark:bg-gray-900/10 flex flex-col gap-2">
         
         {/* Toggle dark/light theme & settings row */}
         <div className="flex items-center justify-between text-gray-500 dark:text-gray-400">
@@ -216,7 +217,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onOpenSettings, isOpenMobile, 
         </div>
 
         {/* User Card */}
-        <div className="flex items-center justify-between p-2 rounded-xl bg-gray-100 dark:bg-gray-900/40 border border-gray-200/50 dark:border-gray-800/50 mt-1">
+        <div className="flex items-center justify-between p-2 rounded-xl bg-gray-100 dark:bg-gray-800/40 border border-gray-200/50 dark:border-gray-700/50 mt-1">
           <div className="min-w-0 flex-1 pr-2">
             <p className="text-xs font-semibold truncate text-gray-800 dark:text-gray-200">
               {user?.email.split('@')[0]}
@@ -246,13 +247,18 @@ export const Sidebar: React.FC<SidebarProps> = ({ onOpenSettings, isOpenMobile, 
         {sidebarContent}
       </div>
 
-      {/* Mobile view backdrop */}
+      {/* Mobile view drawer */}
       {isOpenMobile && (
-        <div className="fixed inset-0 z-40 md:hidden bg-black/50 backdrop-blur-[2px] flex">
-          <div className="w-72 h-full animate-in slide-in-from-left duration-150">
+        <div className="fixed inset-0 z-50 md:hidden">
+          {/* Backdrop */}
+          <div 
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm"
+            onClick={onCloseMobile}
+          />
+          {/* Sidebar drawer */}
+          <div className="fixed left-0 top-0 h-full w-80 max-w-full bg-white dark:bg-gray-900 shadow-2xl animate-in slide-in-from-left duration-200 z-50">
             {sidebarContent}
           </div>
-          <div className="flex-1" onClick={onCloseMobile} />
         </div>
       )}
     </>

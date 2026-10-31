@@ -73,7 +73,7 @@ export const ChatComposer: React.FC = () => {
   };
 
   return (
-    <div className="w-full flex flex-col gap-2 p-4 bg-chatbg-light dark:bg-chatbg-dark border-t border-gray-150 dark:border-gray-800">
+    <div className="w-full flex flex-col gap-2 p-3 sm:p-4 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800">
       
       {/* Attachment previews */}
       {uploadedFiles.length > 0 && (
@@ -81,9 +81,9 @@ export const ChatComposer: React.FC = () => {
           {uploadedFiles.map((file) => (
             <div 
               key={file.id} 
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gray-100 dark:bg-panelbg-dark text-xs border border-gray-200 dark:border-gray-800 animate-in fade-in slide-in-from-bottom-2 duration-100"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gray-100 dark:bg-gray-800 text-xs border border-gray-200 dark:border-gray-800 animate-in fade-in slide-in-from-bottom-2 duration-100"
             >
-              <span className="font-medium text-gray-700 dark:text-gray-300 truncate max-w-[180px]">
+              <span className="font-medium text-gray-700 dark:text-gray-200 truncate max-w-[180px]">
                 {file.filename}
               </span>
               <button
@@ -110,7 +110,7 @@ export const ChatComposer: React.FC = () => {
       )}
 
       {/* Main Composer Box */}
-      <form onSubmit={handleSend} className="relative flex flex-col w-full rounded-2xl border border-gray-200 dark:border-gray-800 bg-gray-50/70 dark:bg-gray-900/60 focus-within:ring-2 focus-within:ring-nova-accent/35 focus-within:border-nova-accent transition-all duration-150">
+      <form onSubmit={handleSend} className="relative flex flex-col w-full rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-800 focus-within:ring-2 focus-within:ring-nova-accent/35 focus-within:border-nova-accent transition-all duration-150">
         
         {/* Text Field */}
         <textarea
@@ -120,12 +120,12 @@ export const ChatComposer: React.FC = () => {
           onKeyDown={handleKeyDown}
           placeholder="Ask NOVA AI anything..."
           rows={1}
-          className="w-full pl-4 pr-16 pt-3.5 pb-12 bg-transparent text-gray-900 dark:text-white placeholder-gray-400 text-sm focus:outline-none resize-none min-h-[44px]"
+          className="w-full pl-3 sm:pl-4 pr-12 sm:pr-16 pt-3 pb-3 sm:pb-12 bg-transparent text-gray-900 dark:text-gray-100 placeholder-gray-400 text-sm focus:outline-none resize-none min-h-[44px] max-h-32"
         />
 
         {/* Controls Toolbar */}
-        <div className="absolute left-3 bottom-3 right-3 flex items-center justify-between pointer-events-none">
-          <div className="flex items-center gap-2 pointer-events-auto">
+        <div className="absolute left-2 sm:left-3 bottom-2 sm:bottom-3 right-2 sm:right-3 flex items-center justify-between pointer-events-none">
+          <div className="flex items-center gap-1 sm:gap-2 pointer-events-auto">
             {/* File upload trigger */}
             <input
               type="file"
@@ -138,7 +138,7 @@ export const ChatComposer: React.FC = () => {
               type="button"
               onClick={() => fileInputRef.current?.click()}
               disabled={isUploading}
-              className={`p-2 rounded-xl text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-200/60 dark:hover:bg-gray-800 transition ${isUploading ? 'opacity-50' : ''}`}
+              className={`p-1.5 sm:p-2 rounded-xl text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-200/60 dark:hover:bg-gray-800 transition ${isUploading ? 'opacity-50' : ''}`}
               title="Attach Document (PDF, TXT, DOCX, MD)"
             >
               <Paperclip className={`w-4 h-4 ${isUploading ? 'animate-pulse' : ''}`} />
@@ -146,7 +146,7 @@ export const ChatComposer: React.FC = () => {
 
             {/* Model Select dropdown */}
             {settings && models.length > 0 && (
-              <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-white dark:bg-chatbg-dark border border-gray-200 dark:border-gray-800 text-xxs font-semibold text-gray-500 dark:text-gray-400">
+              <div className="flex items-center gap-1 px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-xs sm:text-xxs font-semibold text-gray-500 dark:text-gray-400">
                 <Sparkles className="w-3 h-3 text-nova-accent" />
                 <select
                   value={settings.model}
@@ -166,18 +166,18 @@ export const ChatComposer: React.FC = () => {
               <button
                 type="button"
                 onClick={stopGeneration}
-                className="flex items-center justify-center w-8 h-8 rounded-xl bg-red-500 hover:bg-red-600 text-white shadow-md shadow-red-500/10 active:scale-95 transition"
+                className="flex items-center justify-center w-7 sm:w-8 h-7 sm:h-8 rounded-xl bg-red-500 hover:bg-red-600 text-white shadow-md shadow-red-500/10 active:scale-95 transition"
                 title="Stop generation"
               >
-                <StopCircle className="w-4.5 h-4.5" />
+                <StopCircle className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
               </button>
             ) : (
               <button
                 type="submit"
                 disabled={!input.trim() && uploadedFiles.length === 0}
-                className="flex items-center justify-center w-8 h-8 rounded-xl bg-nova-accent hover:bg-nova-accent-hover text-white shadow-md shadow-indigo-500/10 active:scale-95 disabled:opacity-40 disabled:hover:bg-nova-accent disabled:active:scale-100 transition duration-150"
+                className="flex items-center justify-center w-7 sm:w-8 h-7 sm:h-8 rounded-xl bg-nova-accent hover:bg-nova-accent-hover text-white shadow-md shadow-indigo-500/10 active:scale-95 disabled:opacity-40 disabled:hover:bg-nova-accent disabled:active:scale-100 transition duration-150"
               >
-                <ArrowUp className="w-4.5 h-4.5" />
+                <ArrowUp className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
               </button>
             )}
           </div>
@@ -186,7 +186,7 @@ export const ChatComposer: React.FC = () => {
       </form>
       
       {/* Help hint */}
-      <div className="text-center text-xxs text-gray-400 dark:text-gray-500 px-4">
+      <div className="text-center text-xxs text-gray-500 dark:text-gray-400 px-4">
         NOVA AI can make mistakes. Verify important information.
       </div>
       

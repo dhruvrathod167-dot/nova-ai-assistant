@@ -17,7 +17,7 @@ const components = {
     
     if (!inline && language) {
       return (
-        <div className="relative group my-4">
+        <div className="relative my-4">
           <div className="absolute top-2 right-2 z-50 opacity-0 group-hover:opacity-100 transition-opacity">
             <button
               onClick={() => navigator.clipboard.writeText(String(children).replace(/\n$/, ''))}
@@ -33,14 +33,17 @@ const components = {
             customStyle={{
               margin: '0.75rem 0',
               borderRadius: '0.5rem',
-              fontSize: '0.875em',
+              fontSize: '0.75em sm:0.875em',
               lineHeight: '1.5',
               background: document.documentElement.classList.contains('dark') ? '#1e293b' : '#f8fafc',
               color: document.documentElement.classList.contains('dark') ? '#e2e8f0' : '#1e293b',
               boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
-              overflow: 'visible',
+              overflowX: 'auto',
+              overflowY: 'visible',
               wordBreak: 'break-word',
               overflowWrap: 'break-word',
+              maxWidth: '100%',
+              WebkitOverflowScrolling: 'touch',
             }}
             {...props}
           >
@@ -121,10 +124,10 @@ export const MessageItem: React.FC<MessageItemProps> = ({ message }) => {
 
         {/* Text Markdown Render */}
         <div className={`prose dark:prose-invert max-w-none text-sm leading-relaxed text-gray-800 dark:text-gray-200 break-word overflow-wrap-anywhere overflow-visible ${
-          isAssistant && content === 'Thinking...' ? 'streaming-cursor italic text-gray-500' : ''
+          isAssistant && (content === 'Thinking...' || content === '') ? 'streaming-cursor italic text-gray-500' : ''
         }`}>
           <ReactMarkdown components={components}>
-            {content}
+            {content || (isAssistant ? 'Thinking...' : '')}
           </ReactMarkdown>
         </div>
 
