@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { mockUsers, createdUsers, findUserById } from '@/lib/auth-store';
+import { findUserById } from '@/lib/simple-auth';
 
 interface User {
   id: number;

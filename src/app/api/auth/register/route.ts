@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { mockUsers, createdUsers, createUser } from '@/lib/auth-store';
+import { createUser } from '@/lib/simple-auth';
 
 interface RegisterRequest {
   email: string;

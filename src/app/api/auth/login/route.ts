@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { mockUsers, findUserById } from '@/lib/auth-store';
+import { findUserByEmail } from '@/lib/simple-auth';
 
 interface LoginRequest {
   email: string;
