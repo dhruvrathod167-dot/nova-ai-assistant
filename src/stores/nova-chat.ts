@@ -249,8 +249,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
     try {
       // First, try to connect to the real AI backend
       const requestBody = {
-        conversation_id: convId,
-        content: content
+        message: content
       };
       
       const response = await fetch(`${getApiUrl()}/api/chat`, {
