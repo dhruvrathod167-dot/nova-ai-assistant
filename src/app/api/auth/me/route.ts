@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getUserFromRequest, serializeUser } from '@/lib/auth';
+import { ensureDb } from '@/lib/ensure-db';
 
 export async function GET(request: NextRequest) {
   try {
+    await ensureDb();
     const user = await getUserFromRequest(request);
 
     if (!user) {

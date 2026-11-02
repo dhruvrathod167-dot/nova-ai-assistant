@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getUserFromRequest } from '@/lib/auth';
 import { getDefaultModel, isValidModel } from '@/lib/models';
+import { ensureDb } from '@/lib/ensure-db';
 
 interface OpenRouterMessage {
   role: 'system' | 'user' | 'assistant';
@@ -81,6 +82,7 @@ async function callOpenRouterAI(
 
 export async function POST(request: NextRequest) {
   try {
+    await ensureDb();
     const user = await getUserFromRequest(request);
     if (!user) {
       return NextResponse.json(

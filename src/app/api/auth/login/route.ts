@@ -6,9 +6,11 @@ import {
   createAuthToken,
   serializeUser,
 } from '@/lib/auth';
+import { ensureDb } from '@/lib/ensure-db';
 
 export async function POST(request: NextRequest) {
   try {
+    await ensureDb();
     const body = await request.json();
     const { email, password } = body;
 

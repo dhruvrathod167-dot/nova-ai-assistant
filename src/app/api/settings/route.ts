@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getUserFromRequest } from '@/lib/auth';
 import { getDefaultModel } from '@/lib/models';
+import { ensureDb } from '@/lib/ensure-db';
 
 function serializeSettings(
   settings: {
@@ -57,6 +58,7 @@ async function getOrCreateSettings(userId: string) {
 
 export async function GET(request: NextRequest) {
   try {
+    await ensureDb();
     const user = await getUserFromRequest(request);
     if (!user) {
       return NextResponse.json({ detail: 'Unauthorized' }, { status: 401 });
@@ -75,6 +77,7 @@ export async function GET(request: NextRequest) {
 
 export async function PATCH(request: NextRequest) {
   try {
+    await ensureDb();
     const user = await getUserFromRequest(request);
     if (!user) {
       return NextResponse.json({ detail: 'Unauthorized' }, { status: 401 });

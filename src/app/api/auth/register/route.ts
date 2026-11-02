@@ -7,9 +7,11 @@ import {
   serializeUser,
 } from '@/lib/auth';
 import { getDefaultModel } from '@/lib/models';
+import { ensureDb } from '@/lib/ensure-db';
 
 export async function POST(request: NextRequest) {
   try {
+    await ensureDb();
     const body = await request.json();
     const { email, password, name } = body;
 
