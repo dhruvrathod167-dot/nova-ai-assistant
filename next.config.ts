@@ -7,6 +7,9 @@ const nextConfig: NextConfig = {
   },
   reactStrictMode: false,
   output: 'standalone',
+  outputFileTracingIncludes: {
+    '/api/**/*': ['./node_modules/.prisma/**/*', './node_modules/@prisma/client/**/*'],
+  },
   async rewrites() {
     return [
       { source: "/women", destination: "/category/women" },

@@ -70,8 +70,15 @@ export async function POST(request: NextRequest) {
     return response;
   } catch (error) {
     console.error('Registration error:', error);
+    const message =
+      error instanceof Error ? error.message : 'Internal server error';
     return NextResponse.json(
-      { detail: 'Internal server error' },
+      {
+        detail: message.includes('DATABASE') || message.includes('Prisma')
+          ? 'Database unavailable. Please retry shortly.'
+          : 'Internal server error',
+        error: process.env.NODE_ENV === 'production' ? undefined : message,
+      },
       { status: 500 }
     );
   }
