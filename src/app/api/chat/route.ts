@@ -15,7 +15,7 @@ async function callOpenRouterAI(
   temperature: number,
   maxTokens: number
 ): Promise<string> {
-  const apiKey = process.env.OPENROUTER_API_KEY;
+  const apiKey = process.env.OPENROUTER_API_KEY?.trim();
   if (!apiKey) {
     throw new Error('OpenRouter API key is not configured');
   }
@@ -50,7 +50,8 @@ async function callOpenRouterAI(
     clearTimeout(timeoutId);
 
     const rawText = await response.text();
-    console.log('OpenRouter status:', response.status);
+    // Never log the API key or Authorization header — status only.
+    console.log('OpenRouter status:', response.status, 'model:', model);
 
     if (!response.ok) {
       throw new Error(`OpenRouter status: ${response.status}`);
