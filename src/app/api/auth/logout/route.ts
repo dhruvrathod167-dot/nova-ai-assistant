@@ -1,18 +1,19 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
+import { AUTH_COOKIE_NAME } from '@/lib/auth';
 
-export async function POST(request: NextRequest) {
-  try {
-    // In a real application, you might want to blacklist the token
-    // For this demo, we'll just return a success response
-    return NextResponse.json({ 
-      detail: 'Logout successful',
-      message: 'Token has been invalidated. Please clear the token from client storage.'
-    });
-  } catch (error) {
-    console.error('Logout error:', error);
-    return NextResponse.json(
-      { detail: 'Internal server error' },
-      { status: 500 }
-    );
-  }
+export async function POST() {
+  const response = NextResponse.json({
+    detail: 'Logout successful',
+    message: 'Token has been cleared.',
+  });
+
+  response.cookies.set(AUTH_COOKIE_NAME, '', {
+    httpOnly: true,
+    sameSite: 'lax',
+    secure: process.env.NODE_ENV === 'production',
+    path: '/',
+    maxAge: 0,
+  });
+
+  return response;
 }

@@ -36,8 +36,8 @@ export default function ChatPage() {
   const isUserNearBottom = useRef(true);
   const isAutoScrolling = useRef(false);
   const lastScrollTop = useRef(0);
-  const animationFrameRef = useRef<number>();
-  const streamingScrollTimeout = useRef<NodeJS.Timeout>();
+  const animationFrameRef = useRef<number | undefined>(undefined);
+  const streamingScrollTimeout = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   // Initialize Auth & global configurations on load
   useEffect(() => {

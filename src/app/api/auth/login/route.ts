@@ -1,4 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { db } from '@/lib/db';
+import {
+  AUTH_COOKIE_NAME,
+  authCookieOptions,
+  createAuthToken,
+  serializeUser,
+} from '@/lib/auth';
 
 export async function POST(request: NextRequest) {
   try {
@@ -12,18 +19,27 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // For demo purposes, accept any valid email/password combination
-    // In production, you'd validate against a database
-    
-    // Generate token (in production, use JWT or proper auth)
-    const token = `demo_token_${Date.now()}`;
+    const user = await db.user.findUnique({
+      where: { email: String(email).trim().toLowerCase() },
+    });
 
-    const response = {
+    if (!user || user.passwordHash !== password) {
+      return NextResponse.json(
+        { detail: 'Invalid email or password' },
+        { status: 401 }
+      );
+    }
+
+    const token = createAuthToken(user.id);
+    const payload = {
       access_token: token,
-      token_type: 'bearer'
+      token_type: 'bearer',
+      user: serializeUser(user),
     };
 
-    return NextResponse.json(response);
+    const response = NextResponse.json(payload);
+    response.cookies.set(AUTH_COOKIE_NAME, token, authCookieOptions());
+    return response;
   } catch (error) {
     console.error('Login error:', error);
     return NextResponse.json(

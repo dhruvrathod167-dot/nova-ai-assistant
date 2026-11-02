@@ -193,3 +193,54 @@ model Testimonial {
   sortOrder Int      @default(0)
   createdAt DateTime @default(now())
 }
+
+// NOVA AI Models
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String?
+  passwordHash  String
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  // Relationships
+  conversations Conversation[]
+  messages      Message[]
+  settings      UserSettings?
+}
+
+model Conversation {
+  id          String   @id @default(cuid())
+  title       String
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messages    Message[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Message {
+  id           String      @id @default(cuid())
+  conversationId String
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  userId       String
+  user         User        @relation(fields: [userId], references: [id])
+  sender       String      // "user" or "assistant"
+  content      String
+  citations    String?
+  createdAt    DateTime    @default(now())
+  userEdited   Boolean     @default(false)
+}
+
+model UserSettings {
+  id               String   @id @default(cuid())
+  userId           String   @unique
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  systemPrompt    String?  @default("You are NOVA AI, a professional general-purpose AI assistant. Answer clearly, explain technical topics accurately, write and debug code, summarize documents, and follow user instructions. Admit uncertainty instead of inventing facts.")
+  temperature      Float?   @default(0.7)
+  maxTokens        Int?     @default(1000)
+  aiProvider       String?  @default("openrouter")
+  aiModel          String?  @default("openai/gpt-4o-mini")
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}

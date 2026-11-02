@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useEffect, useState } from 'react';
 import { useChatStore } from '@/stores/nova-chat';
 import { X, Moon, Sun, Settings, Bot, Sliders } from 'lucide-react';
@@ -188,7 +190,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
                       className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-nova-accent transition"
                     >
                       {models.map((m) => (
-                        <option key={m} value={m}>{m}</option>
+                        <option key={m.id} value={m.id}>{m.name}</option>
                       ))}
                     </select>
                   ) : (

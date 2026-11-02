@@ -1,20 +1,33 @@
+'use client';
+
 import React, { useRef, useState, useEffect } from 'react';
 import { useChatStore } from '@/stores/nova-chat';
 import { Paperclip, X, AlertCircle, Sparkles, StopCircle, ArrowUp } from 'lucide-react';
 
 export const ChatComposer: React.FC = () => {
-  const { 
-    sendMessage, stopGeneration, isGenerating, isUploading, 
-    uploadedFiles, uploadFile, removeUploadedFile, settings, updateSettings, models 
+  const {
+    sendMessage,
+    stopGeneration,
+    isGenerating,
+    isUploading,
+    uploadedFiles,
+    uploadFile,
+    removeUploadedFile,
+    settings,
+    updateSettings,
+    models,
+    defaultModel,
   } = useChatStore();
 
   const [input, setInput] = useState('');
   const [error, setError] = useState<string | null>(null);
-  
+
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Auto-grow textarea height
+  const selectedModelId =
+    settings?.model || defaultModel || models[0]?.id || '';
+
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto';
@@ -28,17 +41,18 @@ export const ChatComposer: React.FC = () => {
       stopGeneration();
       return;
     }
-    
+
     if (!input.trim() && uploadedFiles.length === 0) return;
-    
+
     const messageContent = input.trim();
     setInput('');
     setError(null);
-    
+
     try {
       await sendMessage(messageContent);
-    } catch (err: any) {
-      setError(err.message || 'Failed to send message');
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Failed to send message';
+      setError(message);
     }
   };
 
@@ -52,35 +66,36 @@ export const ChatComposer: React.FC = () => {
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
-    
+
     setError(null);
     const file = files[0];
     const success = await uploadFile(file);
     if (!success) {
-      setError(`Failed to upload ${file.name}. Size limit: 15MB. Formats: PDF, DOCX, TXT, MD`);
+      setError(
+        `Failed to upload ${file.name}. Size limit: 15MB. Formats: PDF, DOCX, TXT, MD`
+      );
     }
-    
-    // Clear input value so same file can be selected again
+
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
   };
 
   const handleModelChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
-    if (settings) {
-      await updateSettings({ model: e.target.value });
-    }
+    const model = e.target.value;
+    await updateSettings({ model });
   };
+
+  const selectedModelName =
+    models.find((m) => m.id === selectedModelId)?.name || selectedModelId;
 
   return (
     <div className="w-full flex flex-col gap-3 p-3 sm:p-4 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 pb-4 sm:pb-4">
-      
-      {/* Attachment previews */}
       {uploadedFiles.length > 0 && (
         <div className="flex flex-wrap gap-2 px-1">
           {uploadedFiles.map((file) => (
-            <div 
-              key={file.id} 
+            <div
+              key={file.id}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gray-100 dark:bg-gray-800 text-xs border border-gray-200 dark:border-gray-800 animate-in fade-in slide-in-from-bottom-2 duration-100"
             >
               <span className="font-medium text-gray-700 dark:text-gray-200 truncate max-w-[180px]">
@@ -98,21 +113,24 @@ export const ChatComposer: React.FC = () => {
         </div>
       )}
 
-      {/* Inline alerts */}
       {error && (
         <div className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-red-50 dark:bg-red-950/20 text-red-500 text-xs border border-red-200 dark:border-red-900/30">
           <AlertCircle className="w-4 h-4 flex-shrink-0" />
           <span>{error}</span>
-          <button type="button" onClick={() => setError(null)} className="ml-auto text-red-400 hover:text-red-600">
+          <button
+            type="button"
+            onClick={() => setError(null)}
+            className="ml-auto text-red-400 hover:text-red-600"
+          >
             <X className="w-3 h-3" />
           </button>
         </div>
       )}
 
-      {/* Main Composer Box */}
-      <form onSubmit={handleSend} className="relative flex flex-col w-full rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 focus-within:ring-2 focus-within:ring-nova-accent/35 focus-within:border-nova-accent transition-all duration-150">
-        
-        {/* Text Field */}
+      <form
+        onSubmit={handleSend}
+        className="relative flex flex-col w-full rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 focus-within:ring-2 focus-within:ring-nova-accent/35 focus-within:border-nova-accent transition-all duration-150"
+      >
         <textarea
           ref={textareaRef}
           value={input}
@@ -123,10 +141,8 @@ export const ChatComposer: React.FC = () => {
           className="w-full pl-3 sm:pl-4 pr-14 sm:pr-16 pt-3 pb-4 sm:pb-12 bg-transparent text-gray-900 dark:text-gray-100 placeholder-gray-400 text-sm focus:outline-none resize-none min-h-[52px] max-h-32"
         />
 
-        {/* Controls Toolbar */}
         <div className="absolute left-3 sm:left-3 bottom-4 sm:bottom-3 right-12 sm:right-3 flex items-center justify-between pointer-events-none">
           <div className="flex items-center gap-1.5 sm:gap-2 pointer-events-auto">
-            {/* File upload trigger */}
             <input
               type="file"
               ref={fileInputRef}
@@ -141,22 +157,35 @@ export const ChatComposer: React.FC = () => {
               className={`p-1.5 sm:p-2 rounded-xl text-[#6B7280] hover:text-[#374151] hover:bg-gray-200/60 dark:hover:bg-gray-800 transition ${isUploading ? 'opacity-50' : ''} border border-transparent hover:border-gray-300/50`}
               title="Attach Document (PDF, TXT, DOCX, MD)"
             >
-              <Paperclip className={`w-4 h-4 ${isUploading ? 'animate-pulse' : ''} text-current`} />
+              <Paperclip
+                className={`w-4 h-4 ${isUploading ? 'animate-pulse' : ''} text-current`}
+              />
             </button>
 
-            {/* Model Select dropdown */}
-            {settings && models.length > 0 && (
-              <div className="flex sm:flex items-center gap-1 px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-xl bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-xs sm:text-xxs font-semibold text-[#6B7280] dark:text-[#D1D5DB] min-w-fit">
+            {/* Always-visible model selector once models are loaded */}
+            {models.length > 0 ? (
+              <div className="flex items-center gap-1 px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-xl bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-xs font-semibold text-[#6B7280] dark:text-[#D1D5DB] min-w-fit max-w-[220px]">
                 <Sparkles className="w-3 h-3 text-[#C9A96E] flex-shrink-0" />
+                <span className="hidden sm:inline text-[10px] uppercase tracking-wide text-gray-400">
+                  Model:
+                </span>
                 <select
-                  value={settings.model}
+                  value={selectedModelId}
                   onChange={handleModelChange}
-                  className="bg-transparent focus:outline-none cursor-pointer font-sans pr-1 text-current"
+                  aria-label={`Model: ${selectedModelName}`}
+                  className="bg-transparent focus:outline-none cursor-pointer font-sans pr-1 text-current truncate max-w-[140px]"
                 >
                   {models.map((m) => (
-                    <option key={m} value={m}>{m}</option>
+                    <option key={m.id} value={m.id}>
+                      {m.name}
+                    </option>
                   ))}
                 </select>
+              </div>
+            ) : (
+              <div className="flex items-center gap-1 px-2 py-1 rounded-xl border border-dashed border-gray-300 text-[10px] text-gray-400">
+                <Sparkles className="w-3 h-3" />
+                Loading models...
               </div>
             )}
           </div>
@@ -182,14 +211,11 @@ export const ChatComposer: React.FC = () => {
             )}
           </div>
         </div>
-
       </form>
-      
-      {/* Help hint */}
+
       <div className="text-center text-xxs text-gray-500 dark:text-gray-400 px-4">
         NOVA AI can make mistakes. Verify important information.
       </div>
-      
     </div>
   );
 };

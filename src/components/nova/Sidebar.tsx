@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState } from 'react';
 import { useChatStore } from '@/stores/nova-chat';
 import { useAuthStore } from '@/stores/nova-auth';
@@ -21,7 +23,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onOpenSettings, isOpenMobile, 
   } = useChatStore();
   const { user, logout } = useAuthStore();
 
-  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [editTitle, setEditTitle] = useState('');
 
   const handleNewChat = async () => {
@@ -29,13 +31,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ onOpenSettings, isOpenMobile, 
     if (isOpenMobile) onCloseMobile();
   };
 
-  const handleStartRename = (id: number, currentTitle: string, e: React.MouseEvent) => {
+  const handleStartRename = (id: string, currentTitle: string, e: React.MouseEvent) => {
     e.stopPropagation();
     setEditingId(id);
     setEditTitle(currentTitle);
   };
 
-  const handleSaveRename = async (id: number, e: React.MouseEvent) => {
+  const handleSaveRename = async (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
     if (editTitle.trim()) {
       await renameConversation(id, editTitle.trim());
@@ -48,7 +50,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onOpenSettings, isOpenMobile, 
     setEditingId(null);
   };
 
-  const handleDelete = async (id: number, e: React.MouseEvent) => {
+  const handleDelete = async (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
     if (confirm('Delete this conversation?')) {
       await deleteConversation(id);

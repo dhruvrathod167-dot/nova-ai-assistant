@@ -1,44 +1,56 @@
 import { create } from 'zustand';
-import { Conversation, Message, UserSettings } from '@/types/nova';
+import { AiModel, Conversation, Message, UserSettings } from '@/types/nova';
 import { useAuthStore } from '@/stores/nova-auth';
 
 interface ChatState {
   conversations: Conversation[];
-  currentConversationId: number | null;
+  currentConversationId: string | null;
   messages: Message[];
-  models: string[];
+  models: AiModel[];
+  defaultModel: string | null;
   settings: UserSettings | null;
   isGenerating: boolean;
   isUploading: boolean;
   searchQuery: string;
-  uploadedFiles: { id: number; filename: string }[];
+  uploadedFiles: { id: string; filename: string }[];
   abortController: AbortController | null;
-  
+
   setSearchQuery: (query: string) => void;
   fetchConversations: () => Promise<void>;
-  selectConversation: (id: number | null) => Promise<void>;
-  createConversation: (title?: string) => Promise<number | null>;
-  renameConversation: (id: number, title: string) => Promise<void>;
-  deleteConversation: (id: number) => Promise<void>;
+  selectConversation: (id: string | null) => Promise<void>;
+  createConversation: (title?: string) => Promise<string | null>;
+  renameConversation: (id: string, title: string) => Promise<void>;
+  deleteConversation: (id: string) => Promise<void>;
   sendMessage: (content: string) => Promise<void>;
   stopGeneration: () => void;
   uploadFile: (file: File) => Promise<boolean>;
-  removeUploadedFile: (id: number) => void;
+  removeUploadedFile: (id: string) => void;
   fetchSettings: () => Promise<void>;
   updateSettings: (settingsPatch: Partial<UserSettings>) => Promise<void>;
   fetchModels: () => Promise<void>;
 }
 
 const getApiUrl = () => {
-  // Always use the production API URL for both web and Electron
-  return process.env.NEXT_PUBLIC_API_URL || 'https://nova-ai-assistant-3.onrender.com';
+  if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
+    return '';
+  }
+  return process.env.NEXT_PUBLIC_API_URL || '';
 };
+
+function authHeaders(token: string, json = false): HeadersInit {
+  const headers: Record<string, string> = {
+    Authorization: `Bearer ${token}`,
+  };
+  if (json) headers['Content-Type'] = 'application/json';
+  return headers;
+}
 
 export const useChatStore = create<ChatState>((set, get) => ({
   conversations: [],
   currentConversationId: null,
   messages: [],
   models: [],
+  defaultModel: null,
   settings: null,
   isGenerating: false,
   isUploading: false,
@@ -53,64 +65,36 @@ export const useChatStore = create<ChatState>((set, get) => ({
     if (!token) return;
     try {
       const response = await fetch(`${getApiUrl()}/api/conversations`, {
-        headers: { 'Authorization': `Bearer ${token}` }
+        headers: authHeaders(token),
       });
       if (response.ok) {
         const conversations = await response.json();
-        set({ conversations });
+        set({ conversations: Array.isArray(conversations) ? conversations : [] });
       } else {
-        // Create mock conversations if API fails
-        const mockConversations = [
-          {
-            id: 1,
-            title: 'Welcome to NOVA AI',
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-          },
-          {
-            id: 2,
-            title: 'Python Programming',
-            created_at: new Date(Date.now() - 86400000).toISOString(),
-            updated_at: new Date(Date.now() - 86400000).toISOString(),
-          }
-        ];
-        set({ conversations: mockConversations });
+        console.error('Failed to fetch conversations:', response.status);
+        set({ conversations: [] });
       }
     } catch (err) {
       console.error('Failed to fetch conversations', err);
-      // Create mock conversations if API fails
-      const mockConversations = [
-        {
-          id: 1,
-          title: 'Welcome to NOVA AI',
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        },
-        {
-          id: 2,
-          title: 'Python Programming',
-          created_at: new Date(Date.now() - 86400000).toISOString(),
-          updated_at: new Date(Date.now() - 86400000).toISOString(),
-        }
-      ];
-      set({ conversations: mockConversations });
+      set({ conversations: [] });
     }
   },
 
   selectConversation: async (id) => {
     set({ currentConversationId: id, messages: [], uploadedFiles: [] });
     if (id === null) return;
-    
+
     const token = useAuthStore.getState().token;
     if (!token) return;
-    
+
     try {
-      const response = await fetch(`${getApiUrl()}/api/conversations/${id}/messages`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
+      const response = await fetch(
+        `${getApiUrl()}/api/conversations/${id}/messages`,
+        { headers: authHeaders(token) }
+      );
       if (response.ok) {
         const messages = await response.json();
-        set({ messages });
+        set({ messages: Array.isArray(messages) ? messages : [] });
       }
     } catch (err) {
       console.error('Failed to fetch messages', err);
@@ -125,11 +109,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
     try {
       const response = await fetch(`${getApiUrl()}/api/conversations`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({ title: title || 'New Chat' })
+        headers: authHeaders(token, true),
+        body: JSON.stringify({ title: title || 'New Chat' }),
       });
       if (response.ok) {
         const newConv = await response.json();
@@ -137,7 +118,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
           conversations: [newConv, ...state.conversations],
           currentConversationId: newConv.id,
           messages: [],
-          uploadedFiles: []
+          uploadedFiles: [],
         }));
         return newConv.id;
       }
@@ -147,23 +128,21 @@ export const useChatStore = create<ChatState>((set, get) => ({
     return null;
   },
 
-  
   renameConversation: async (id, title) => {
     const token = useAuthStore.getState().token;
     if (!token) return;
     try {
       const response = await fetch(`${getApiUrl()}/api/conversations/${id}`, {
         method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({ title })
+        headers: authHeaders(token, true),
+        body: JSON.stringify({ title }),
       });
       if (response.ok) {
         const updated = await response.json();
         set((state) => ({
-          conversations: state.conversations.map((c) => (c.id === id ? updated : c))
+          conversations: state.conversations.map((c) =>
+            c.id === id ? updated : c
+          ),
         }));
       }
     } catch (err) {
@@ -177,21 +156,24 @@ export const useChatStore = create<ChatState>((set, get) => ({
     try {
       const response = await fetch(`${getApiUrl()}/api/conversations/${id}`, {
         method: 'DELETE',
-        headers: { 'Authorization': `Bearer ${token}` }
+        headers: authHeaders(token),
       });
       if (response.ok) {
         set((state) => {
           const filtered = state.conversations.filter((c) => c.id !== id);
-          const nextActive = state.currentConversationId === id 
-            ? (filtered.length > 0 ? filtered[0].id : null)
-            : state.currentConversationId;
-          
+          const nextActive =
+            state.currentConversationId === id
+              ? filtered.length > 0
+                ? filtered[0].id
+                : null
+              : state.currentConversationId;
+
           return {
             conversations: filtered,
-            currentConversationId: nextActive
+            currentConversationId: nextActive,
           };
         });
-        
+
         const nextId = get().currentConversationId;
         if (nextId) {
           get().selectConversation(nextId);
@@ -211,10 +193,6 @@ export const useChatStore = create<ChatState>((set, get) => ({
       throw new Error('Authentication required. Please sign in to use NOVA AI.');
     }
 
-    // Let the backend handle conversation creation if none is active
-    // The chat API will automatically create a conversation when no conversation_id is provided
-
-    // Abort existing generation
     if (get().isGenerating) {
       get().stopGeneration();
     }
@@ -222,187 +200,108 @@ export const useChatStore = create<ChatState>((set, get) => ({
     const controller = new AbortController();
     set({ isGenerating: true, abortController: controller });
 
-    // Append client-side user message immediately to the UI
     const clientUserMessage: Message = {
-      id: Date.now(), // Temporary key
-      conversation_id: convId || 'temp', // Use temporary ID if no conversation yet
+      id: `temp-user-${Date.now()}`,
+      conversation_id: convId || 'temp',
       sender: 'user',
-      content: content,
+      content,
       created_at: new Date().toISOString(),
       user_edited: false,
-      citations: []
+      citations: [],
     };
     set((state) => ({ messages: [...state.messages, clientUserMessage] }));
 
-    // Append helper streaming container placeholder for assistant response
     const clientAssistantMessage: Message = {
-      id: Date.now() + 1, // Temporary key
-      conversation_id: convId || 'temp', // Use temporary ID if no conversation yet
+      id: `temp-assistant-${Date.now() + 1}`,
+      conversation_id: convId || 'temp',
       sender: 'assistant',
       content: '',
       created_at: new Date().toISOString(),
       user_edited: false,
-      citations: []
+      citations: [],
     };
     set((state) => ({ messages: [...state.messages, clientAssistantMessage] }));
 
     try {
-      // First, try to connect to the real AI backend
-      const requestBody = {
-        message: content
+      const selectedModel =
+        get().settings?.model || get().defaultModel || undefined;
+
+      const requestBody: Record<string, unknown> = {
+        message: content,
       };
-      
+      if (convId) requestBody.conversation_id = convId;
+      if (selectedModel) requestBody.model = selectedModel;
+
+      set((state) => ({
+        messages: state.messages.map((m) =>
+          m.id === clientAssistantMessage.id
+            ? { ...m, content: 'Thinking...' }
+            : m
+        ),
+      }));
+
       const response = await fetch(`${getApiUrl()}/api/chat`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
+        headers: authHeaders(token, true),
         body: JSON.stringify(requestBody),
-        signal: controller.signal
+        signal: controller.signal,
       });
 
       if (!response.ok) {
-        // Try decoding direct JSON response body for explicit quota limit message details
         let errText = `HTTP error ${response.status}`;
         try {
           const errData = await response.json();
-          if (errData && errData.detail) {
-            errText = errData.detail;
-          }
-        } catch (_) {}
+          errText = errData.detail || errData.error || errText;
+        } catch {
+          /* ignore */
+        }
         throw new Error(errText);
       }
 
-      const reader = response.body?.getReader();
-      if (!reader) throw new Error('No readable response body');
+      const data = await response.json();
+      const aiText: string =
+        data.response || data.message || data.content || '';
 
-      const decoder = new TextDecoder();
-      let buffer = '';
-
-      while (true) {
-        const { value, done } = await reader.read();
-        if (done) break;
-
-        buffer += decoder.decode(value, { stream: true });
-        const lines = buffer.split('\n');
-        
-        buffer = lines.pop() || '';
-
-        for (const line of lines) {
-          const cleanLine = line.trim();
-          if (!cleanLine.startsWith('data: ')) continue;
-          
-          let parsed: any;
-          try {
-            parsed = JSON.parse(cleanLine.substring(6));
-          } catch (e) {
-            console.error('Failed to parse SSE JSON line:', cleanLine, e);
-            continue;
-          }
-
-          if (parsed.status === 'thinking') {
-            set((state) => ({
-              messages: state.messages.map((m) => 
-                m.id === clientAssistantMessage.id && (m.content === '' || m.content === 'Thinking...') ? { ...m, content: 'Thinking...' } : m
-              )
-            }));
-          } else if (parsed.chunk) {
-            set((state) => ({
-              messages: state.messages.map((m) => {
-                if (m.id === clientAssistantMessage.id) {
-                  const currentText = m.content === 'Thinking...' ? '' : m.content;
-                  const newText = currentText + parsed.chunk;
-                  return { ...m, content: newText };
-                }
-                return m;
-              })
-            }));
-          } else if (parsed.status === 'done') {
-            set((state) => ({
-              messages: state.messages.map((m) => 
-                m.id === clientAssistantMessage.id ? { 
-                  ...m, 
-                  id: parsed.message_id, 
-                  citations: parsed.citations || [],
-                  content: parsed.content || m.content  // Use the final content from the backend
-                } : m
-              )
-            }));
-            get().fetchConversations();
-          } else if (parsed.status === 'error') {
-            const errorMsg = parsed.error || 'AI generation failed';
-            set((state) => ({
-              messages: state.messages.map((m) => 
-                m.id === clientAssistantMessage.id ? { 
-                  ...m, 
-                  content: `⚠️ **AI Provider Error:**\n${errorMsg}` 
-                } : m
-              )
-            }));
-            return;
-          }
-        }
-      }
-      
-      // Safeguard: Check if message is still 'Thinking...' or empty when stream ended unexpectedly
-      const finalMsg = get().messages.find((m) => m.id === clientAssistantMessage.id);
-      if (finalMsg && (finalMsg.content === '' || finalMsg.content === 'Thinking...')) {
-        set((state) => ({
-          messages: state.messages.map((m) => 
-            m.id === clientAssistantMessage.id ? { 
-              ...m, 
-              content: '⚠️ **Error:** Connection ended before receiving an AI response.' 
-            } : m
-          )
-        }));
+      if (!aiText || aiText.startsWith('Thinking...')) {
+        throw new Error(data.error || 'Empty response from AI provider');
       }
 
+      set((state) => ({
+        messages: state.messages.map((m) =>
+          m.id === clientAssistantMessage.id
+            ? {
+                ...m,
+                id: data.id || data.message_id || m.id,
+                conversation_id: data.conversation_id ?? m.conversation_id,
+                content: aiText,
+                citations: [],
+              }
+            : m
+        ),
+      }));
+
+      if (data.conversation_id && !convId) {
+        set({ currentConversationId: data.conversation_id });
+        convId = data.conversation_id;
+      }
+      get().fetchConversations();
       set({ uploadedFiles: [] });
-    } catch (err: any) {
-      if (err.name === 'AbortError') {
-        console.log('Stream generation aborted');
+    } catch (err: unknown) {
+      const error = err as { name?: string; message?: string };
+      if (error.name === 'AbortError') {
+        console.log('Generation aborted');
       } else {
-        console.error('Streaming failed:', err);
-        
-        // Check if this is a backend connection error
-        if (err.message.includes('Failed to fetch') || err.message.includes('Network Error')) {
-          // Show a technical error message instead of pretending to be an AI
-          const errorMessage = `⚠️ **Connection Error:**
-
-Unable to connect to the NOVA AI backend. This could be due to:
-
-- The AI backend server is not running (expected: http://127.0.0.1:8002)
-- Network connectivity issues  
-- API service interruptions
-
-**Troubleshooting:**
-1. Ensure the NOVA AI backend is running
-2. Check your network connection
-3. Verify the backend is accessible at http://127.0.0.1:8002
-4. Try again in a few moments
-
-For technical support, check the server logs or documentation.`;
-          
-          set((state) => ({
-            messages: state.messages.map((m) => 
-              m.id === clientAssistantMessage.id ? { 
-                ...m, 
-                content: errorMessage 
-              } : m
-            )
-          }));
-        } else {
-          // Show the original error for other types of errors
-          set((state) => ({
-            messages: state.messages.map((m) => 
-              m.id === clientAssistantMessage.id ? { 
-                ...m, 
-                content: `⚠️ **Error:** ${err.message || 'Connection lost'}` 
-              } : m
-            )
-          }));
-        }
+        console.error('Chat failed:', err);
+        set((state) => ({
+          messages: state.messages.map((m) =>
+            m.id === clientAssistantMessage.id
+              ? {
+                  ...m,
+                  content: `⚠️ **Error:** ${error.message || 'Connection lost'}`,
+                }
+              : m
+          ),
+        }));
       }
     } finally {
       set({ isGenerating: false, abortController: null });
@@ -420,24 +319,25 @@ For technical support, check the server logs or documentation.`;
   uploadFile: async (file) => {
     const token = useAuthStore.getState().token;
     if (!token) return false;
-    
+
     set({ isUploading: true });
     const formData = new FormData();
     formData.append('file', file);
-    
+
     try {
       const response = await fetch(`${getApiUrl()}/api/files/upload`, {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        },
-        body: formData
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData,
       });
-      
+
       if (response.ok) {
         const uploaded = await response.json();
         set((state) => ({
-          uploadedFiles: [...state.uploadedFiles, { id: uploaded.id, filename: uploaded.filename }]
+          uploadedFiles: [
+            ...state.uploadedFiles,
+            { id: String(uploaded.id), filename: uploaded.filename },
+          ],
         }));
         return true;
       }
@@ -452,7 +352,7 @@ For technical support, check the server logs or documentation.`;
 
   removeUploadedFile: (id) => {
     set((state) => ({
-      uploadedFiles: state.uploadedFiles.filter((f) => f.id !== id)
+      uploadedFiles: state.uploadedFiles.filter((f) => f.id !== id),
     }));
   },
 
@@ -461,11 +361,25 @@ For technical support, check the server logs or documentation.`;
     if (!token) return;
     try {
       const response = await fetch(`${getApiUrl()}/api/settings`, {
-        headers: { 'Authorization': `Bearer ${token}` }
+        headers: authHeaders(token),
       });
       if (response.ok) {
         const settings = await response.json();
-        set({ settings });
+        set({
+          settings: {
+            theme: settings.theme || 'dark',
+            provider: settings.provider || 'openai',
+            model: settings.model || get().defaultModel || '',
+            temperature: settings.temperature ?? 0.7,
+            max_tokens: settings.max_tokens ?? 1000,
+            system_prompt: settings.system_prompt ?? null,
+            email: settings.email,
+            user_id: settings.user_id,
+            success: settings.success,
+          },
+        });
+      } else {
+        console.error('Failed to fetch settings:', response.status);
       }
     } catch (err) {
       console.error('Failed to fetch settings', err);
@@ -478,15 +392,24 @@ For technical support, check the server logs or documentation.`;
     try {
       const response = await fetch(`${getApiUrl()}/api/settings`, {
         method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(settingsPatch)
+        headers: authHeaders(token, true),
+        body: JSON.stringify(settingsPatch),
       });
       if (response.ok) {
         const settings = await response.json();
-        set({ settings });
+        set({
+          settings: {
+            theme: settings.theme || 'dark',
+            provider: settings.provider || 'openai',
+            model: settings.model || get().defaultModel || '',
+            temperature: settings.temperature ?? 0.7,
+            max_tokens: settings.max_tokens ?? 1000,
+            system_prompt: settings.system_prompt ?? null,
+            email: settings.email,
+            user_id: settings.user_id,
+            success: settings.success,
+          },
+        });
       }
     } catch (err) {
       console.error('Failed to update settings', err);
@@ -498,14 +421,44 @@ For technical support, check the server logs or documentation.`;
     if (!token) return;
     try {
       const response = await fetch(`${getApiUrl()}/api/settings/models`, {
-        headers: { 'Authorization': `Bearer ${token}` }
+        headers: authHeaders(token),
       });
       if (response.ok) {
-        const models = await response.json();
-        set({ models });
+        const data = await response.json();
+        const models: AiModel[] = Array.isArray(data)
+          ? data
+          : Array.isArray(data.models)
+            ? data.models
+            : [];
+        const defaultModel =
+          (typeof data.defaultModel === 'string' && data.defaultModel) ||
+          models[0]?.id ||
+          null;
+
+        set({ models, defaultModel });
+
+        const currentSettings = get().settings;
+        if (!currentSettings) {
+          set({
+            settings: {
+              theme: 'dark',
+              provider: 'openai',
+              model: defaultModel || '',
+              temperature: 0.7,
+              max_tokens: 1000,
+              system_prompt: null,
+            },
+          });
+        } else if (!currentSettings.model && defaultModel) {
+          set({
+            settings: { ...currentSettings, model: defaultModel },
+          });
+        }
+      } else {
+        console.error('Failed to fetch models:', response.status);
       }
     } catch (err) {
       console.error('Failed to fetch models', err);
     }
-  }
+  },
 }));
