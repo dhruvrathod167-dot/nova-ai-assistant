@@ -16,7 +16,8 @@ export async function POST(request: NextRequest) {
       message: 'Login endpoint is working',
       email: email,
       timestamp: new Date().toISOString(),
-      success: true 
+      success: true,
+      version: '1.0.1'
     });
   } catch (error) {
     console.error('Simple login error:', error);
