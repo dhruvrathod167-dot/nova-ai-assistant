@@ -35,12 +35,24 @@ if (!fs.existsSync(path.join(__dirname, 'node_modules/@prisma/client'))) {
 
 // Set the correct database path for standalone build
 const dbPath = path.join(__dirname, 'prisma', 'dev.db');
-if (fs.existsSync(dbPath)) {
+const prodDbPath = path.join(__dirname, 'var', 'data', 'nova.db');
+
+// Use production database path if available, otherwise use local
+if (fs.existsSync(prodDbPath)) {
+  process.env.DATABASE_URL = `file:${prodDbPath}`;
+  console.log(`Using production database at: ${prodDbPath}`);
+} else if (fs.existsSync(dbPath)) {
   process.env.DATABASE_URL = `file:${dbPath}`;
-  console.log(`Using database at: ${dbPath}`);
+  console.log(`Using local database at: ${dbPath}`);
 } else {
-  console.log('Database file not found at:', dbPath);
-  console.log('Starting server without database connection');
+  // Create database directory and file if they don't exist
+  const dbDir = path.join(__dirname, 'var', 'data');
+  if (!fs.existsSync(dbDir)) {
+    fs.mkdirSync(dbDir, { recursive: true });
+  }
+  fs.writeFileSync(prodDbPath, '');
+  process.env.DATABASE_URL = `file:${prodDbPath}`;
+  console.log(`Created new database at: ${prodDbPath}`);
 }
 
 // Start the server directly without waiting for database
