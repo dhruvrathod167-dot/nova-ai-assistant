@@ -65,10 +65,11 @@ function startServer() {
       ...process.env, 
       PORT: PORT,
       HOSTNAME: HOST,
-      NODE_ENV: 'production'
+      NODE_ENV: 'production',
+      DATABASE_URL: process.env.DATABASE_URL || `file:${prodDbPath}`
     },
     stdio: 'inherit',
-    cwd: __dirname
+    cwd: path.join(__dirname, '.next', 'standalone')
   });
 
   serverProcess.on('error', (error) => {
