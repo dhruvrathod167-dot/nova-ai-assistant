@@ -8,6 +8,7 @@ export default function HomePage() {
 
   useEffect(() => {
     // Redirect to chat page immediately
+    // Updated for deployment fix
     router.push('/chat');
   }, [router]);
 
